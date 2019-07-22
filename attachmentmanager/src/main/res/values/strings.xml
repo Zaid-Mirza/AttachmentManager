@@ -4,4 +4,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loading">Loading</string>
+    <string name="choose">Choose</string>
+    <string name="camera">Camera</string>
+    <string name="document">Document</string>
+    <string name="image">Image</string>
+    <string name="close_dialog_txt">Close Dialog</string>
 </resources>

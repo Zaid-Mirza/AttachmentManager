@@ -1,4 +1,4 @@
-package com.mirza.attachmentmanager
+package com.mirza.attachmentmanager.utils
 
 import android.content.Context
 import android.content.Intent
@@ -9,13 +9,16 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.mirza.attachmentmanager.R
+import com.mirza.attachmentmanager.models.Tuple
 import java.io.File
 
 object AttachmentUtil {
-    const val APP_TAG = "Jawdah"
+    const val APP_TAG = "AttachmentManager"
     const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1000
     const val PICK_PHOTO_CODE = 1001
     const val FILE_CODE = 125
+
     // Returns the File for a photo stored on disk given the fileName
     private fun getPhotoFileUri(fileName: String, context: Context): File {
         // Get safe storage directory for photos
@@ -41,7 +44,7 @@ object AttachmentUtil {
         val photoFileName = "IMG_" + System.currentTimeMillis() + ".jpg"
         val photoFile = getPhotoFileUri(photoFileName, context)
 
-        val fileProvider = FileProvider.getUriForFile(context, context.packageName + ".fileprovider", photoFile)
+        val fileProvider = FileProvider.getUriForFile(context, context.packageName + ".attachmentmanager", photoFile)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
 
         val tuple = Tuple()
@@ -51,9 +54,10 @@ object AttachmentUtil {
     }
 
     // Trigger gallery selection for a photo
-    fun onPhoto(context: Context): Intent {
+    fun onPhoto(context: Context, isMultiple: Boolean?): Intent {
         // Create intent for picking a photo from the gallery
-        return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple
+                ?: false)
     }
 
     fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?): Intent {
@@ -71,17 +75,17 @@ object AttachmentUtil {
         if (list?.size!! > 0) {
             if (fragmentContext == null) {
                 activity.startActivityForResult(
-                    Intent.createChooser(
-                        intent,
-                        activity.getString(R.string.selectFile_txt)
-                    ), FILE_CODE
+                        Intent.createChooser(
+                                intent,
+                                activity.getString(R.string.selectFile_txt)
+                        ), FILE_CODE
                 )
             } else {
                 fragmentContext.startActivityForResult(
-                    Intent.createChooser(
-                        intent,
-                        activity.getString(R.string.selectFile_txt)
-                    ), FILE_CODE
+                        Intent.createChooser(
+                                intent,
+                                activity.getString(R.string.selectFile_txt)
+                        ), FILE_CODE
                 )
             }
         }

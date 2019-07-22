@@ -1,4 +1,4 @@
-package com.mirza.attachmentmanager
+package com.mirza.attachmentmanager.models
 
 import android.content.Intent
 import java.io.File

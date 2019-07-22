@@ -1,4 +1,4 @@
-package com.mirza.attachmentmanager
+package com.mirza.attachmentmanager.utils
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
