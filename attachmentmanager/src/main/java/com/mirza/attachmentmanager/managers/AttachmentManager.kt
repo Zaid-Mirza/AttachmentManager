@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
@@ -73,7 +74,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
     private fun openFileSystem(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
-            val intent = AttachmentUtil.onFile(activity, fragment)
+            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple)
         }
     }
 
@@ -86,6 +87,9 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                         if (isMultiple) {
 
                             // Stub
+                            data.clipData?.let {
+                                Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
+                            }
 
                         } else {
 

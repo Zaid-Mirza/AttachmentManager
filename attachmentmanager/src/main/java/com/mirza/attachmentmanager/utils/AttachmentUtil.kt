@@ -54,17 +54,27 @@ object AttachmentUtil {
     }
 
     // Trigger gallery selection for a photo
-    fun onPhoto(context: Context, isMultiple: Boolean?): Intent {
+    fun onPhoto(context: Context, isMultiple: Boolean): Intent {
         // Create intent for picking a photo from the gallery
-        return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple
-                ?: false)
+        if (isMultiple) {
+            val types = arrayOf(
+
+                    "image/png",
+                    "image/jpg",
+                    "image/jpeg"
+            )
+            val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, types)
+            return intent
+        } else
+            return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
     }
 
-    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?): Intent {
+    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?, isMultiple: Boolean?): Intent {
         val intent = Intent()
         intent.action = Intent.ACTION_OPEN_DOCUMENT
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple ?: false)
         intent.type = if (FileUtil.mimeTypes.size == 1) FileUtil.mimeTypes[0] else "*/*"
         if (FileUtil.mimeTypes.isNotEmpty()) {
             intent.putExtra(Intent.EXTRA_MIME_TYPES, FileUtil.mimeTypes)

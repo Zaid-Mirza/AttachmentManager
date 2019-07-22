@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this)
                 .activity(this)
-                .allowMultiple(false)
+                .allowMultiple(true)
                 .build()
         fab.setOnClickListener {
 
