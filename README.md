@@ -1,5 +1,6 @@
 # AttachmentManager
 
+[![](https://jitpack.io/v/Zaid-Mirza/AttachmentManager.svg)](https://jitpack.io/#Zaid-Mirza/AttachmentManager)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 <br/>
@@ -12,7 +13,7 @@
 </div>
 <br/>
                                                                          
-You can use this light weight library to implement attachment feature (taking picture using camera, picking up file/image from gallery or file system).
+You can use this light weight library to implement attachment feature (taking picture using camera, picking up file/image from gallery or file system or google drive).
 The library helps you to simplify all the process related to picking files without worrying about system permissions
 ### Language Support
 
@@ -43,7 +44,7 @@ The library helps you to simplify all the process related to picking files witho
   </provider>
 ```
 
-2. Create **file_provider.xml** in values/xml
+2. Create **file_provider.xml** in res/xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
