@@ -99,3 +99,15 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
 ```
+
+## Other Usage
+
+1. You can open gallery,camera or file system directly without showing selection UI to user
+
+```kotlin
+ attachmentManager?.startCamera()
+ // OR
+ attachmentManager?.openGallery()
+ // OR
+ attachmentManager?.openFilSystem()
+```
