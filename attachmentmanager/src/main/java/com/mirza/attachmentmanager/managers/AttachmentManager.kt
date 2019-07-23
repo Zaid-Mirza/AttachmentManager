@@ -19,6 +19,10 @@ import java.io.File
 class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
 
+    companion object {
+        val instance = this
+    }
+
     private var title: String? = ""
     private var activity: AppCompatActivity? = null
     private var fragment: Fragment? = null
@@ -27,6 +31,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var context: Context? = null
     private var cameraFile: File? = null
     private var isBottomSheet = false
+
 
     init {
         activity = builder.activity
@@ -191,20 +196,20 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     /**
      * Initiates AttachmentManager object for you
      */
-    data class AttachmentBuilder(var context: Context,
-                                 var activity: AppCompatActivity? = null,
-                                 var fragment: Fragment? = null,
-                                 var title: String? = context.getString(R.string.m_choose),
-                                 var isMultiple: Boolean = false,
-                                 var isBottomSheet: Boolean = false) {
+    open class AttachmentBuilder(var context: Context) {
 
+        var activity: AppCompatActivity? = null
+        var fragment: Fragment? = null
+        var title: String? = context.getString(R.string.m_choose)
+        var isMultiple: Boolean = false
+        var isBottomSheet: Boolean = false
 
         fun activity(activity: AppCompatActivity?) = apply { this.activity = activity }
         fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
         /**
          * @param title of dialog or bottom sheet
          */
-        fun setTitle(title: String?) = apply { this.title = title }
+        fun setUiTitle(title: String?) = apply { this.title = title }
 
         fun allowMultiple(isMultiple: Boolean) = apply { this.isMultiple = isMultiple }
         fun asBottomSheet(isBottomSheet: Boolean) = apply { this.isBottomSheet = isBottomSheet }
