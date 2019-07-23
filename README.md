@@ -12,12 +12,12 @@ The library helps you to simplify all the process related to picking files witho
 
 1. Add permissions and provider in **AndroidManifest.xml**
 
-```groovy
+```xml
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 ```
-```groovy
+```xml
  <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.attachmentmanager"
@@ -32,7 +32,7 @@ The library helps you to simplify all the process related to picking files witho
 ```
 
 2. Create **file_provider.xml** in values/xml
-```groovy
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-path
