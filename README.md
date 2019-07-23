@@ -74,7 +74,7 @@ allprojects {
 # Usage
 
 
-1. Intiates AttachmentManager object using builder pattern
+1. Initiate AttachmentManager object using builder pattern
 
   **Kotlin**
 
@@ -96,7 +96,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 ```
 
-3. Call open **openSelection()** method to show selection UI
+3. Call **openSelection()** method to show selection UI
 
 ```kotlin
  attachmentManager?.openSelection()
