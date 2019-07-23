@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.DialogTitle
 import androidx.fragment.app.DialogFragment
 import com.mirza.attachmentmanager.R
 
@@ -19,7 +21,7 @@ enum class DialogAction {
     GALLERY, CAMERA, FILE
 }
 
-class AttachmentFragment(val listener: (DialogAction) -> Unit) : DialogFragment() {
+class AttachmentFragment(val title: String? = null, val listener: (DialogAction) -> Unit) : DialogFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +39,10 @@ class AttachmentFragment(val listener: (DialogAction) -> Unit) : DialogFragment(
         val cameraLinearLayout = view.findViewById<LinearLayout>(R.id.camera_linearLayout)
         val fileLinearLayout = view.findViewById<LinearLayout>(R.id.file_linearLayout)
         val cancelImageView = view.findViewById<ImageView>(R.id.cancel_imageView)
+        val titleTextView = view.findViewById<TextView>(R.id.title_textView)
+        title?.let {
+            titleTextView.text = it
+        }
         cancelImageView.setOnClickListener { dismiss() }
 
         imageLinearLayout.setOnClickListener {

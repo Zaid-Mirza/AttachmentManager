@@ -44,12 +44,12 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         activity?.let {
 
             if (isBottomSheet) {
-                val attachmentFragmentSheet = AttachmentBottomSheet { action ->
+                val attachmentFragmentSheet = AttachmentBottomSheet(title) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
             } else {
-                val attachmentFragmentDialog = AttachmentFragment() { action ->
+                val attachmentFragmentDialog = AttachmentFragment(title) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")

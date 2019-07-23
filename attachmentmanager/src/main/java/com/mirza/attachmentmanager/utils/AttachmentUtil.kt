@@ -19,7 +19,10 @@ object AttachmentUtil {
     const val PICK_PHOTO_CODE = 1001
     const val FILE_CODE = 125
 
-    // Returns the File for a photo stored on disk given the fileName
+    /**
+     * @param fileName name of the image
+     * @return  File for a photo stored on disk given the fileName
+     */
     private fun getPhotoFileUri(fileName: String, context: Context): File {
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.
@@ -30,9 +33,6 @@ object AttachmentUtil {
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d(APP_TAG, "failed to create directory")
         }
-
-        // Return the file target for the photo based on filename
-
         return File(mediaStorageDir.path + File.separator + fileName)
     }
 
@@ -53,7 +53,6 @@ object AttachmentUtil {
         return tuple
     }
 
-    // Trigger gallery selection for a photo
     fun onPhoto(context: Context, isMultiple: Boolean): Intent {
         // Create intent for picking a photo from the gallery
         if (isMultiple) {

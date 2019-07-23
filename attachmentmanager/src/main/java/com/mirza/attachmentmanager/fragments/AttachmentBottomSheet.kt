@@ -1,6 +1,5 @@
 package com.mirza.attachmentmanager.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,7 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mirza.attachmentmanager.R
 
-import android.app.Activity.RESULT_OK
-import android.widget.LinearLayout
-
-class AttachmentBottomSheet(val listener: (DialogAction) -> Unit) : BottomSheetDialogFragment() {
+class AttachmentBottomSheet(var title: String? = null, val listener: (DialogAction) -> Unit) : BottomSheetDialogFragment() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,9 +22,14 @@ class AttachmentBottomSheet(val listener: (DialogAction) -> Unit) : BottomSheetD
 
         val view = inflater.inflate(R.layout.layout_attachment_sheet, container, false)
 
+        val titleTextView = view.findViewById<TextView>(R.id.title_textView)
         val imageTextView = view.findViewById<TextView>(R.id.gallery_textView)
         val cameraTextView = view.findViewById<TextView>(R.id.camera_textView)
         val fileTextView = view.findViewById<TextView>(R.id.file_textView)
+        title?.let {
+            titleTextView.text = it
+        }
+
 
         imageTextView.setOnClickListener {
             listener(DialogAction.GALLERY)

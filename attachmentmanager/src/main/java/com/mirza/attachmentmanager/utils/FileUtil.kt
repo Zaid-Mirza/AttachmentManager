@@ -45,7 +45,7 @@ object FileUtil {
         } else {
             val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                fileExtension.toLowerCase()
+                    fileExtension.toLowerCase()
             )
         }
         return mimeType
@@ -88,11 +88,11 @@ object FileUtil {
     }
 
     var mimeTypes = arrayOf(
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "application/pdf"
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/pdf"
     )
 
     @SuppressLint("NewApi")
@@ -125,11 +125,11 @@ object FileUtil {
                 }
 
                 val contentUriPrefixesToTry =
-                    arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads")
+                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads")
 
                 for (contentUriPrefix in contentUriPrefixesToTry) {
                     val contentUri =
-                        ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
+                            ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
                     try {
                         val path = getDataColumn(context, contentUri, null, null)
                         if (path != null) {
@@ -146,7 +146,7 @@ object FileUtil {
                 val file = generateFileName(fileName, cacheDir)
                 var destinationPath: String? = null
                 if (file != null) {
-                    destinationPath = file!!.getAbsolutePath()
+                    destinationPath = file.getAbsolutePath()
                     saveFileFromUri(context, uri, destinationPath)
                 }
 
@@ -169,7 +169,8 @@ object FileUtil {
                 val selectionArgs = arrayOf(split[1])
 
                 return getDataColumn(context, contentUri!!, selection, selectionArgs)
-            }// MediaProvider
+            }
+            // MediaProvider
             // DownloadsProvider
             // ExternalStorageProvider
             else if ("content".equals(uri.scheme, ignoreCase = true)) {
@@ -196,8 +197,6 @@ object FileUtil {
         else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.getPath();
         }
-        // File
-        // MediaStore (and general)
 
         return null
     }
@@ -309,8 +308,8 @@ object FileUtil {
     }
 
     private fun getDataColumn(
-        context: Context, uri: Uri, selection: String?,
-        selectionArgs: Array<String>?
+            context: Context, uri: Uri, selection: String?,
+            selectionArgs: Array<String>?
     ): String? {
 
         var cursor: Cursor? = null;
@@ -319,8 +318,8 @@ object FileUtil {
 
         try {
             cursor = context.getContentResolver().query(
-                uri, projection, selection, selectionArgs,
-                null
+                    uri, projection, selection, selectionArgs,
+                    null
             );
             if (cursor != null && cursor.moveToFirst()) {
 

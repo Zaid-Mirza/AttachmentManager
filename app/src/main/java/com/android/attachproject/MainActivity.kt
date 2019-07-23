@@ -16,10 +16,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        attachmentManager = AttachmentManager.AttachmentBuilder(this)
-                .activity(this)
-                .allowMultiple(true)
-                .asBottomSheet(true)
+        attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
+                .activity(this) // container activity
+                .fragment(null) // pass fragment reference if you are in fragment
+                .setTitle("Choose File") // title of dialog or bottom sheet
+                .allowMultiple(true) // set true if you want make multiple selection, default is false
+                .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .build()
         fab.setOnClickListener {
 

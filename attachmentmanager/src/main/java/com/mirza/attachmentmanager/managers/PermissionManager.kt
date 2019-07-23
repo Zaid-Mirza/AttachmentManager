@@ -44,8 +44,8 @@ object PermissionManager {
 
     }
 
-    fun checkForPermissions(appCompatActivity: AppCompatActivity?, fragment: Fragment?, requiredPermissions: ArrayList<String>, permissionCode: Int): Boolean {
-        var requiredPermissions = requiredPermissions
+    fun checkForPermissions(appCompatActivity: AppCompatActivity?, fragment: Fragment?, pRequiredPermissions: ArrayList<String>, permissionCode: Int): Boolean {
+        var requiredPermissions = pRequiredPermissions
 
         if (appCompatActivity != null) {
             requiredPermissions = checkForPermission(requiredPermissions, appCompatActivity)
