@@ -87,14 +87,14 @@ object AttachmentUtil {
                 activity.startActivityForResult(
                         Intent.createChooser(
                                 intent,
-                                activity.getString(R.string.selectFile_txt)
+                                activity.getString(R.string.m_selectFile_txt)
                         ), FILE_CODE
                 )
             } else {
                 fragmentContext.startActivityForResult(
                         Intent.createChooser(
                                 intent,
-                                activity.getString(R.string.selectFile_txt)
+                                activity.getString(R.string.m_selectFile_txt)
                         ), FILE_CODE
                 )
             }

@@ -92,10 +92,7 @@ object FileUtil {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
         "application/vnd.ms-excel",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "application/pdf",
-        "image/png",
-        "image/jpg",
-        "image/jpeg"
+        "application/pdf"
     )
 
     @SuppressLint("NewApi")
@@ -348,10 +345,10 @@ object FileUtil {
             fileSize = file.length();
 
             // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
-            fileSize = fileSize?.let {
-                (it / 1024) / 1024;
-
-            }
+//            fileSize = fileSize?.let {
+//                (it / 1024) / 1024;
+//
+//            }
         }
 
 

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
+import com.mirza.attachmentmanager.fragments.AttachmentBottomSheet
 import com.mirza.attachmentmanager.fragments.AttachmentFragment
 import com.mirza.attachmentmanager.utils.AttachmentUtil
 import com.mirza.attachmentmanager.fragments.DialogAction
@@ -25,6 +26,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var isMultiple = false
     private var context: Context? = null
     private var cameraFile: File? = null
+    private var isBottomSheet = false
 
     init {
         activity = builder.activity
@@ -32,30 +34,55 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         title = builder.title
         isMultiple = builder.isMultiple
         context = builder.context
+        isBottomSheet = builder.isBottomSheet
     }
 
-    fun openSelectionDialog() {
+    /**
+     * Call this method to open attachment selection
+     */
+    fun openSelection() {
         activity?.let {
 
-            val fragment = AttachmentFragment() { action ->
-                selection = action
-                when (action) {
-                    DialogAction.GALLERY -> {
-                        openGallery(activity, fragment, AttachmentUtil.PICK_PHOTO_CODE)
-                    }
-                    DialogAction.CAMERA -> {
-                        openCamera(activity, fragment, AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
-                    }
-
-                    DialogAction.FILE -> {
-                        openFileSystem(activity, fragment, AttachmentUtil.FILE_CODE)
-                    }
+            if (isBottomSheet) {
+                val attachmentFragmentSheet = AttachmentBottomSheet { action ->
+                    handleSelectionResponse(action)
                 }
+                attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
+            } else {
+                val attachmentFragmentDialog = AttachmentFragment() { action ->
+                    handleSelectionResponse(action)
+                }
+                attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")
             }
-            fragment.show(it.supportFragmentManager, "DIALOG_SELECTION")
+
         }
     }
 
+    /**
+     * @param action contains selection value selected by user using dialog or bottom sheet
+     */
+
+    private fun handleSelectionResponse(action: DialogAction) {
+        selection = action
+        when (action) {
+            DialogAction.GALLERY -> {
+                openGallery()
+            }
+            DialogAction.CAMERA -> {
+                startCamera()
+            }
+
+            DialogAction.FILE -> {
+                openFileSystem()
+            }
+        }
+    }
+
+    /**
+     * @param activity container Activity and could be null if if user is interacting with AttachmentManager from fragment
+     * @param fragment will hold the reference to fragment if user is interacting with AttachmentManager from fragment
+     * @param permissionCode used in case of permission grant
+     */
 
     private fun openCamera(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.cameraPermissionList, permissionCode)) {
@@ -65,6 +92,12 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         }
     }
 
+    /**
+     * @param activity container Activity and could be null if if user is interacting with AttachmentManager from fragment
+     * @param fragment will hold the reference to fragment if user is interacting with AttachmentManager from fragment
+     * @param permissionCode used in case of permission grant
+     */
+
     private fun openGallery(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
             val intent = AttachmentUtil.onPhoto(activity!!, isMultiple)
@@ -72,23 +105,53 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         }
     }
 
+    /**
+     * @param activity container Activity and could be null if if user is interacting with AttachmentManager from fragment
+     * @param fragment will hold the reference to fragment if user is interacting with AttachmentManager from fragment.
+     * @param permissionCode used in case of permission grant
+     */
     private fun openFileSystem(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
             val intent = AttachmentUtil.onFile(activity, fragment, isMultiple)
         }
     }
 
+    /**
+     * Use below three methods to interact with AttachmentManager directly without any dialog or bottom sheet
+     */
+    fun startCamera() {
+        openCamera(activity, fragment, AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+    }
+
+    fun openGallery() {
+        openGallery(activity, fragment, AttachmentUtil.PICK_PHOTO_CODE)
+    }
+
+    fun openFileSystem() {
+        openFileSystem(activity, fragment, AttachmentUtil.FILE_CODE)
+    }
+
+
+    /**
+     * Use this method from onActivityResult within your activity or fragment
+     * @return List of AttachmentDetail objects
+     */
     fun manipulateAttachments(requestCode: Int, resultCode: Int, data: Intent?): ArrayList<AttachmentDetail>? {
         val list = ArrayList<AttachmentDetail>()
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 AttachmentUtil.FILE_CODE, AttachmentUtil.PICK_PHOTO_CODE -> {
                     if (data != null) {
-                        if (isMultiple) {
+                        if (isMultiple && data.clipData != null) {
 
-                            // Stub
                             data.clipData?.let {
-                                Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
+                                for (x in 0 until it.itemCount) {
+                                    it.getItemAt(x).uri?.let { uri ->
+                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, context!!, File(uri.toString())), FileUtil.getMimeType(uri, context!!), FileUtil.getFileSize(uri, context!!)))
+                                    }
+
+                                }
                             }
 
                         } else {
@@ -125,16 +188,26 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         return attachmentDetail
     }
 
+    /**
+     * Initiates AttachmentManager object for you
+     */
     data class AttachmentBuilder(var context: Context,
                                  var activity: AppCompatActivity? = null,
                                  var fragment: Fragment? = null,
-                                 var title: String? = context.getString(R.string.choose),
-                                 var isMultiple: Boolean = false) {
+                                 var title: String? = context.getString(R.string.m_choose),
+                                 var isMultiple: Boolean = false,
+                                 var isBottomSheet: Boolean = false) {
+
 
         fun activity(activity: AppCompatActivity?) = apply { this.activity = activity }
         fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
+        /**
+         * @param title of dialog or bottom sheet
+         */
         fun setTitle(title: String?) = apply { this.title = title }
+
         fun allowMultiple(isMultiple: Boolean) = apply { this.isMultiple = isMultiple }
+        fun asBottomSheet(isBottomSheet: Boolean) = apply { this.isBottomSheet = isBottomSheet }
 
         fun build() = AttachmentManager(this)
 

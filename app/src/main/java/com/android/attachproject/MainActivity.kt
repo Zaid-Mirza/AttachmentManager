@@ -19,10 +19,11 @@ class MainActivity : AppCompatActivity() {
         attachmentManager = AttachmentManager.AttachmentBuilder(this)
                 .activity(this)
                 .allowMultiple(true)
+                .asBottomSheet(true)
                 .build()
         fab.setOnClickListener {
 
-            attachmentManager?.openSelectionDialog()
+            attachmentManager?.openSelection()
         }
     }
 

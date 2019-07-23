@@ -38,7 +38,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.8"
-                    android:text="@string/choose"
+                    android:text="@string/m_choose"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/close_dialog_txt"
+                    android:contentDescription="@string/m_close_dialog_txt"
                     android:src="@drawable/ic_close_black_24dp" />
             </LinearLayout>
 
@@ -79,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
                         android:gravity="start|center_vertical"
-                        android:text="@string/image"
+                        android:text="@string/m_gallery"
                         android:textColor="#0F1C24"
                         android:visibility="visible" />
                 </LinearLayout>
@@ -102,7 +102,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
                         android:gravity="start|center_vertical"
-                        android:text="@string/camera"
+                        android:text="@string/m_camera"
                         android:textColor="#0F1C24"
                         android:visibility="visible" />
                 </LinearLayout>
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
                         android:gravity="start|center_vertical"
-                        android:text="@string/document"
+                        android:text="@string/m_document"
                         android:textColor="#0F1C24"
                         android:visibility="visible" />
                 </LinearLayout>

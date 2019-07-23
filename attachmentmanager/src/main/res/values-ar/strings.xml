@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">AttachmentManager</string>
+    <string name="m_selectFile_txt">حدد الملف</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loading">تحميل…</string>
+    <string name="m_choose">اختر</string>
+    <string name="m_camera">الكاميرا</string>
+    <string name="m_document">ملف</string>
+    <string name="m_image">صورة</string>
+    <string name="m_close_dialog_txt">Close Dialog</string>
+    <string name="m_gallery">المعرض</string>
+</resources>

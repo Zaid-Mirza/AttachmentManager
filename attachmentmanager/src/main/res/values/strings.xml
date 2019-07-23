@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">AttachmentManager</string>
-    <string name="selectFile_txt">Select File</string>
+    <string name="m_selectFile_txt">Select File</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="loading">Loading</string>
-    <string name="choose">Choose</string>
-    <string name="camera">Camera</string>
-    <string name="document">Document</string>
-    <string name="image">Image</string>
-    <string name="close_dialog_txt">Close Dialog</string>
+    <string name="m_choose">Choose</string>
+    <string name="m_camera">Camera</string>
+    <string name="m_document">Document</string>
+    <string name="m_image">Image</string>
+    <string name="m_close_dialog_txt">Close Dialog</string>
+    <string name="m_gallery">Gallery</string>
 </resources>
