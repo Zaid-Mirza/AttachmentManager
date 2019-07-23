@@ -1,6 +1,18 @@
 # AttachmentManager
 
-You can use this library to implement attachment feature like taking picture using camera, picking up file/image from gallery or file system.
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
+![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
+<br/>
+<div align="center">
+  <sub>Developed by
+  <a href="https://twitter.com/zaidmirzait">Zaid Mirza</a> and
+  <a href="https://github.com/Zaid-Mirza/AttachmentManager/graphs/contributors">
+    contributors
+  </a>
+</div>
+<br/>
+                                                                         
+You can use this light weight library to implement attachment feature (taking picture using camera, picking up file/image from gallery or file system).
 The library helps you to simplify all the process related to picking files without worrying about system permissions
 ### Language Support
 
@@ -100,7 +112,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
     }
 ```
 
-## Other Usage
+### Other Usage
 
 1. You can open gallery,camera or file system directly without showing selection UI to user
 
@@ -111,3 +123,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
  // OR
  attachmentManager?.openFilSystem()
 ```
+## Note
+
+Any kind of improvements and suggestions are welcomed. Also, if you are using this library in your project then please do provide me your app url. I will list your app here.
+
