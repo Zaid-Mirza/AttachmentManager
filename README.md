@@ -95,7 +95,26 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 .build()
        
     }
+    
 ```
+**Java**
+```java
+ private AttachmentManager attachmentManager = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
+                .activity(this) // container activity
+                .fragment(null) // pass fragment reference if you are in fragment
+                .setUiTitle("Choose File") // title of dialog or bottom sheet
+                .allowMultiple(true) // set true if you want make multiple selection, default is false
+                .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .build();
+    }
+```
+
 
 3. Call **openSelection()** method to show selection UI
 
