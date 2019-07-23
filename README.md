@@ -50,7 +50,7 @@ The library helps you to simplify all the process related to picking files witho
 allprojects {
    repositories {
       	jcenter()
-       	maven { url "https://jitpack.io" }  //Make sure to add this in your project for uCrop
+       	maven { url "https://jitpack.io" }  //Make sure to add this in your project
    }
 }
 ```
