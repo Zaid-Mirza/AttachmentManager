@@ -15,10 +15,26 @@
                                                                          
 You can use this light weight library to implement attachment feature (taking picture using camera, picking up file/image from gallery or file system or google drive).
 The library helps you to simplify all the process related to picking files without worrying about system permissions
+
 ### Language Support
 
 * English
 * Arabic
+
+### Warning!
+
+1. This library is build using **AndroidX**.So, I recommend you to migrate your project to **AndroidX** otherwise it may cause problem using both androidx and support libs togather.
+
+2. You might face error ``` Invoke-customs are only supported starting with android 0 --min-api 26  ``` 
+.To solve this add below lines in app level **build.gradle** file.
+
+```groovy
+compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+```
+
 
 
 # Prerequisite
@@ -58,7 +74,7 @@ The library helps you to simplify all the process related to picking files witho
 ```
 
 
-3. Include the library as local library project.
+3. Update  project level **build.gradle** file.
 ```groovy
 allprojects {
    repositories {
@@ -69,7 +85,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.0.0'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.0.1'
 ```
 
 # Usage
@@ -89,22 +105,46 @@ override fun onCreate(savedInstanceState: Bundle?) {
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context 
                 .activity(this) // container activity
                 .fragment(null) // pass fragment reference if you are in fragment
-                .setTitle("Choose File") // title of dialog or bottom sheet
+                .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .build()
        
     }
+    
 ```
+**Java**
+```java
+ private AttachmentManager attachmentManager = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
+                .activity(this) // container activity
+                .fragment(null) // pass fragment reference if you are in fragment
+                .setUiTitle("Choose File") // title of dialog or bottom sheet
+                .allowMultiple(true) // set true if you want make multiple selection, default is false
+                .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .build();
+    }
+```
+
 
 3. Call **openSelection()** method to show selection UI
 
+**Kotlin**
 ```kotlin
  attachmentManager?.openSelection()
 ````
-
+**Java**
+```java
+attachmentManager.openSelection();
+```
 4. Override onActivityResult
 
+**Kotlin**
 ```kotlin
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -112,17 +152,36 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
 ```
+**Java**
+```java
+ @Override
+ protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data); // gives you neccessary detail about attachment like uri,name,size,path and mimtype
+        Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
+    }
+```
 
 ### Other Usage
 
 1. You can open gallery,camera or file system directly without showing selection UI to user
 
+***Kotlin***
 ```kotlin
  attachmentManager?.startCamera()
  // OR
  attachmentManager?.openGallery()
  // OR
  attachmentManager?.openFilSystem()
+```
+
+**Java**
+```java
+ attachmentManager.startCamera();
+ // OR
+ attachmentManager.openGallery();
+ // OR
+ attachmentManager.openFilSystem();
 ```
 ## Note
 
