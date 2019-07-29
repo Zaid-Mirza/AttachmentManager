@@ -3,6 +3,7 @@ package com.mirza.attachmentmanager.fragments
 
 import android.app.Dialog
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.DialogTitle
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.mirza.attachmentmanager.R
 
@@ -21,7 +23,7 @@ enum class DialogAction {
     GALLERY, CAMERA, FILE
 }
 
-class AttachmentFragment(val title: String? = null, val listener: (DialogAction) -> Unit) : DialogFragment() {
+class AttachmentFragment(val title: String? = null, val optionTextColor: Int? = null, val imagesColor: Int? = null, val listener: (DialogAction) -> Unit) : DialogFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -35,11 +37,18 @@ class AttachmentFragment(val title: String? = null, val listener: (DialogAction)
 
         val inflater = LayoutInflater.from(activity)
         val view = inflater.inflate(R.layout.layout_attachment_dialog, null)
+
+        arguments?.let {
+
+        }
+
         val imageLinearLayout = view.findViewById<LinearLayout>(R.id.image_linearLayout)
         val cameraLinearLayout = view.findViewById<LinearLayout>(R.id.camera_linearLayout)
         val fileLinearLayout = view.findViewById<LinearLayout>(R.id.file_linearLayout)
         val cancelImageView = view.findViewById<ImageView>(R.id.cancel_imageView)
         val titleTextView = view.findViewById<TextView>(R.id.title_textView)
+        applySettings(view)
+
         title?.let {
             titleTextView.text = it
         }
@@ -62,6 +71,31 @@ class AttachmentFragment(val title: String? = null, val listener: (DialogAction)
                 .setView(view).create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return dialog
+    }
+
+    private fun applySettings(view: View) {
+        val galleryImageView = view.findViewById<ImageView>(R.id.gallary_imageView)
+        val cameraImageView = view.findViewById<ImageView>(R.id.camera_imageView)
+        val fileImageView = view.findViewById<ImageView>(R.id.file_imageView)
+
+        val galleryTextView = view.findViewById<TextView>(R.id.gallery_textView)
+        val cameraTextView = view.findViewById<TextView>(R.id.camera_textView)
+        val fileTextView = view.findViewById<TextView>(R.id.file_textView)
+
+        imagesColor?.let {
+            galleryImageView.setColorFilter(ContextCompat.getColor(context!!, imagesColor), PorterDuff.Mode.SRC_IN)
+            cameraImageView.setColorFilter(ContextCompat.getColor(context!!, imagesColor), PorterDuff.Mode.SRC_IN)
+            fileImageView.setColorFilter(ContextCompat.getColor(context!!, imagesColor), PorterDuff.Mode.SRC_IN)
+        }
+        optionTextColor?.let {
+            galleryTextView.setTextColor(ContextCompat.getColor(context!!, optionTextColor))
+            cameraTextView.setTextColor(ContextCompat.getColor(context!!, optionTextColor))
+            fileTextView.setTextColor(ContextCompat.getColor(context!!, optionTextColor))
+
+
+        }
+
+
     }
 
 

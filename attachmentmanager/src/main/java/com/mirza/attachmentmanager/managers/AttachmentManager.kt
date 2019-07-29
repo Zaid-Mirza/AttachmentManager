@@ -3,6 +3,8 @@ package com.mirza.attachmentmanager.managers
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +33,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var context: Context? = null
     private var cameraFile: File? = null
     private var isBottomSheet = false
+    private var imagesColor: Int? = null
+    private var optionsTextColor: Int? = null
 
 
     init {
@@ -40,6 +44,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         isMultiple = builder.isMultiple
         context = builder.context
         isBottomSheet = builder.isBottomSheet
+        imagesColor = builder.imagesColor
+        optionsTextColor = builder.optionsTextColor
     }
 
     /**
@@ -54,7 +60,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
             } else {
-                val attachmentFragmentDialog = AttachmentFragment(title) { action ->
+                val attachmentFragmentDialog = AttachmentFragment(title, optionsTextColor, imagesColor) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")
@@ -182,6 +188,31 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         return list
     }
 
+
+    /**
+     * Use this method from onRequestPermissionsResult within your activity or fragment
+     * It will handle permission results for you
+     */
+    fun handlePermissionResponse(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startCamera()
+                }
+            }
+            AttachmentUtil.PICK_PHOTO_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                }
+            }
+            AttachmentUtil.FILE_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openFileSystem()
+                }
+            }
+        }
+    }
+
     private fun prepareAttachment(uri: Uri, name: String, mimeType: String?, size: Long): AttachmentDetail {
 
         val attachmentDetail = AttachmentDetail()
@@ -196,13 +227,15 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     /**
      * Initiates AttachmentManager object for you
      */
-    open class AttachmentBuilder(var context: Context) {
+    data class AttachmentBuilder(var context: Context) {
 
         var activity: AppCompatActivity? = null
         var fragment: Fragment? = null
         var title: String? = context.getString(R.string.m_choose)
         var isMultiple: Boolean = false
         var isBottomSheet: Boolean = false
+        var imagesColor: Int? = null
+        var optionsTextColor: Int? = null
 
         fun activity(activity: AppCompatActivity?) = apply { this.activity = activity }
         fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
@@ -213,6 +246,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
         fun allowMultiple(isMultiple: Boolean) = apply { this.isMultiple = isMultiple }
         fun asBottomSheet(isBottomSheet: Boolean) = apply { this.isBottomSheet = isBottomSheet }
+        fun setImagesColor(imagesColor: Int) = apply { this.imagesColor = imagesColor }
+        fun setOptionsTextColor(textColor: Int) = apply { this.optionsTextColor = textColor }
 
         fun build() = AttachmentManager(this)
 

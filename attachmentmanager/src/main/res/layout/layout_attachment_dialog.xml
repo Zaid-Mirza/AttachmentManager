@@ -69,12 +69,15 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/gallary_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_photo_album_black_24dp"
+                        android:tint="?attr/colorPrimary"
                         tools:ignore="ContentDescription" />
 
                     <TextView
+                        android:id="@+id/gallery_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
@@ -93,11 +96,14 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/camera_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_camera_alt_black_24dp" />
+                        android:src="@drawable/ic_camera_alt_black_24dp"
+                        android:tint="?attr/colorPrimary" />
 
                     <TextView
+                        android:id="@+id/camera_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
@@ -116,11 +122,14 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/file_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_attach_file_black_24dp" />
+                        android:src="@drawable/ic_attach_file_black_24dp"
+                        android:tint="?attr/colorPrimary" />
 
                     <TextView
+                        android:id="@+id/file_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
