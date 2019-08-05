@@ -161,7 +161,23 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
     }
 ```
+5. Overide onRequestPermissionsResult (Optional)
 
+**Kotlin**
+```kotlin
+override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults)
+    }
+
+```
+**Java**
+```java
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        attachmentManager.handlePermissionResponse(requestCode,permissions,grantResults);
+    }
+```
 ### Other Usage
 
 1. You can open gallery,camera or file system directly without showing selection UI to user
@@ -183,6 +199,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
  // OR
  attachmentManager.openFilSystem();
 ```
+
 ## Note
 
 Any kind of improvements and suggestions are welcomed. Also, if you are using this library in your project then please do provide me your app url. I will list your app here.
