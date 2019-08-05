@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
                 .activity(this) // container activity
                 .fragment(null) // pass fragment reference if you are in fragment
-                .setUiTitle("Choose File") // title of dialog or bottom sheet
+                .setUiTitle(getString(R.string.m_choose)) // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .setOptionsTextColor(android.R.color.holo_green_light)

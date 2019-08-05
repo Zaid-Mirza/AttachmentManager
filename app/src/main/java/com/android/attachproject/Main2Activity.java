@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.mirza.attachmentmanager.managers.AttachmentManager;
 import com.mirza.attachmentmanager.models.AttachmentDetail;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -51,5 +52,11 @@ public class Main2Activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data);
         Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        attachmentManager.handlePermissionResponse(requestCode,permissions,grantResults);
     }
 }
