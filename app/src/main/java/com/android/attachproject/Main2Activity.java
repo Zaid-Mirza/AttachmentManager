@@ -39,24 +39,19 @@ public class Main2Activity extends AppCompatActivity {
                 .build();
         Toast.makeText(this, "", Toast.LENGTH_LONG).show();
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attachmentManager.openSelection();
-            }
-        });
+        fab.setOnClickListener(view -> attachmentManager.openSelection());
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-       ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data);
-        Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
+        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data);
+        Toast.makeText(this, (list != null ? list.size() : 0) + "", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        attachmentManager.handlePermissionResponse(requestCode,permissions,grantResults);
+        attachmentManager.handlePermissionResponse(requestCode, permissions, grantResults);
     }
 }
