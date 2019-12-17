@@ -40,6 +40,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:drawableTint="?attr/colorPrimary"
         android:backgroundTint="@android:color/white"
         android:drawableStart="@drawable/ic_camera_alt_black_24dp"
         android:drawablePadding="32dp"
