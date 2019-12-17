@@ -108,6 +108,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .build()
        
     }
@@ -127,6 +128,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .build();
     }
 ```
