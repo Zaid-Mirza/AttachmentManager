@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .setOptionsTextColor(android.R.color.holo_green_light)
                 .setImagesColor(R.color.colorAccent)
-                .hide(HideOption.DOCUMENT)
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .build()
         fab.setOnClickListener {
 

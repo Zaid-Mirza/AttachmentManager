@@ -32,13 +32,13 @@ class AttachmentBottomSheet(var title: String? = null, private val hideOption: H
         val fileTextView = view.findViewById<TextView>(R.id.file_textView)
         when (hideOption) {
             HideOption.GALLERY -> {
-                view.findViewById<LinearLayout>(R.id.image_linearLayout).visibility = GONE
+                imageTextView.visibility = GONE
             }
             HideOption.CAMERA -> {
-                view.findViewById<LinearLayout>(R.id.camera_linearLayout).visibility = GONE
+                cameraTextView.visibility = GONE
             }
             HideOption.DOCUMENT -> {
-                view.findViewById<LinearLayout>(R.id.file_linearLayout).visibility = GONE
+                fileTextView.visibility = GONE
             }
         }
         title?.let {

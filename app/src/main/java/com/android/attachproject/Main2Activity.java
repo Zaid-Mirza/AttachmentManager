@@ -35,9 +35,9 @@ public class Main2Activity extends AppCompatActivity {
                 .activity(this) // container activity
                 .fragment(null) // pass fragment reference if you are in fragment
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
-                .allowMultiple(true)
-                .hide(HideOption.CAMERA)// set true if you want make multiple selection, default is false
+                .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .build(); // Hide any of the three options
 
         Toast.makeText(this, "", Toast.LENGTH_LONG).show();
