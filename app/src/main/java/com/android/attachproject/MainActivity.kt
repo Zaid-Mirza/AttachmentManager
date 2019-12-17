@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity;
 import com.mirza.attachmentmanager.managers.AttachmentManager
+import com.mirza.attachmentmanager.managers.HideOption
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
                 .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .setOptionsTextColor(android.R.color.holo_green_light)
                 .setImagesColor(R.color.colorAccent)
+                .hide(HideOption.DOCUMENT)
                 .build()
         fab.setOnClickListener {
 

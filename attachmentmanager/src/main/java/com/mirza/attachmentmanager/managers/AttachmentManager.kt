@@ -18,6 +18,10 @@ import com.mirza.attachmentmanager.models.AttachmentDetail
 import com.mirza.attachmentmanager.utils.FileUtil
 import java.io.File
 
+enum class HideOption {
+    GALLERY, CAMERA, DOCUMENT
+}
+
 class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
 
@@ -35,6 +39,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var isBottomSheet = false
     private var imagesColor: Int? = null
     private var optionsTextColor: Int? = null
+    private var hideOptions: HideOption? = null
 
 
     init {
@@ -46,6 +51,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         isBottomSheet = builder.isBottomSheet
         imagesColor = builder.imagesColor
         optionsTextColor = builder.optionsTextColor
+        hideOptions = builder.hideOption
     }
 
     /**
@@ -55,12 +61,12 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         activity?.let {
 
             if (isBottomSheet) {
-                val attachmentFragmentSheet = AttachmentBottomSheet(title) { action ->
+                val attachmentFragmentSheet = AttachmentBottomSheet(title, hideOptions) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
             } else {
-                val attachmentFragmentDialog = AttachmentFragment(title, optionsTextColor, imagesColor) { action ->
+                val attachmentFragmentDialog = AttachmentFragment(title, optionsTextColor, imagesColor, hideOptions) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")
@@ -175,6 +181,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     }
                 }
                 AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
+
                     val fileUri = Uri.fromFile(cameraFile)
                     val file = File(fileUri.toString())
                     val displayName = FileUtil.getFileDisplayName(fileUri, activity as AppCompatActivity, file)
@@ -236,6 +243,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var isBottomSheet: Boolean = false
         var imagesColor: Int? = null
         var optionsTextColor: Int? = null
+        var hideOption: HideOption? = null
 
         fun activity(activity: AppCompatActivity?) = apply { this.activity = activity }
         fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
@@ -248,6 +256,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun asBottomSheet(isBottomSheet: Boolean) = apply { this.isBottomSheet = isBottomSheet }
         fun setImagesColor(imagesColor: Int) = apply { this.imagesColor = imagesColor }
         fun setOptionsTextColor(textColor: Int) = apply { this.optionsTextColor = textColor }
+        fun hide(option: HideOption?) = apply { this.hideOption = option }
 
         fun build() = AttachmentManager(this)
 

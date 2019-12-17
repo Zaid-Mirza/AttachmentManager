@@ -3,13 +3,17 @@ package com.mirza.attachmentmanager.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mirza.attachmentmanager.R
+import com.mirza.attachmentmanager.managers.AttachmentManager
+import com.mirza.attachmentmanager.managers.HideOption
 
-class AttachmentBottomSheet(var title: String? = null, val listener: (DialogAction) -> Unit) : BottomSheetDialogFragment() {
+class AttachmentBottomSheet(var title: String? = null, private val hideOption: HideOption?, val listener: (DialogAction) -> Unit) : BottomSheetDialogFragment() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +30,17 @@ class AttachmentBottomSheet(var title: String? = null, val listener: (DialogActi
         val imageTextView = view.findViewById<TextView>(R.id.gallery_textView)
         val cameraTextView = view.findViewById<TextView>(R.id.camera_textView)
         val fileTextView = view.findViewById<TextView>(R.id.file_textView)
+        when (hideOption) {
+            HideOption.GALLERY -> {
+                view.findViewById<LinearLayout>(R.id.image_linearLayout).visibility = GONE
+            }
+            HideOption.CAMERA -> {
+                view.findViewById<LinearLayout>(R.id.camera_linearLayout).visibility = GONE
+            }
+            HideOption.DOCUMENT -> {
+                view.findViewById<LinearLayout>(R.id.file_linearLayout).visibility = GONE
+            }
+        }
         title?.let {
             titleTextView.text = it
         }

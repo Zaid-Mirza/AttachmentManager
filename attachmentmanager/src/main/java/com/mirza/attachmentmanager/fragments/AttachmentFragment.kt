@@ -17,13 +17,15 @@ import androidx.appcompat.widget.DialogTitle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.mirza.attachmentmanager.R
+import com.mirza.attachmentmanager.managers.AttachmentManager
+import com.mirza.attachmentmanager.managers.HideOption
 
 
 enum class DialogAction {
     GALLERY, CAMERA, FILE
 }
 
-class AttachmentFragment(val title: String? = null, val optionTextColor: Int? = null, val imagesColor: Int? = null, val listener: (DialogAction) -> Unit) : DialogFragment() {
+class AttachmentFragment(val title: String? = null, private val optionTextColor: Int? = null, private val imagesColor: Int? = null, private val hideOption: HideOption?, val listener: (DialogAction) -> Unit) : DialogFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +51,17 @@ class AttachmentFragment(val title: String? = null, val optionTextColor: Int? = 
         val titleTextView = view.findViewById<TextView>(R.id.title_textView)
         applySettings(view)
 
+        when (hideOption) {
+            HideOption.GALLERY -> {
+                view.findViewById<LinearLayout>(R.id.image_linearLayout).visibility = View.GONE
+            }
+            HideOption.CAMERA -> {
+                view.findViewById<LinearLayout>(R.id.camera_linearLayout).visibility = View.GONE
+            }
+            HideOption.DOCUMENT -> {
+                view.findViewById<LinearLayout>(R.id.file_linearLayout).visibility = View.GONE
+            }
+        }
         title?.let {
             titleTextView.text = it
         }
