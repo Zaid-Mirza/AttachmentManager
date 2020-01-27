@@ -85,7 +85,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.0.4'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.0.5'
 ```
 
 # Usage
