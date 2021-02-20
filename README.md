@@ -102,8 +102,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
-        attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context 
-                .activity(this) // container activity
+        attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass containing activity Context
                 .fragment(null) // pass fragment reference if you are in fragment
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
@@ -122,8 +121,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
-                .activity(this) // container activity
+        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass containing activity Context
                 .fragment(null) // pass fragment reference if you are in fragment
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false

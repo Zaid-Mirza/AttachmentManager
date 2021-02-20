@@ -32,7 +32,6 @@ public class Main2Activity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
-                .activity(this) // container activity
                 .fragment(null) // pass fragment reference if you are in fragment
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false

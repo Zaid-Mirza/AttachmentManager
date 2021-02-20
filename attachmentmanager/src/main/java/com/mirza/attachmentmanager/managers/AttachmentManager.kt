@@ -4,9 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
@@ -34,7 +32,6 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var fragment: Fragment? = null
     private var selection: DialogAction? = null
     private var isMultiple = false
-    private var context: Context? = null
     private var cameraFile: File? = null
     private var isBottomSheet = false
     private var imagesColor: Int? = null
@@ -47,7 +44,6 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fragment = builder.fragment
         title = builder.title
         isMultiple = builder.isMultiple
-        context = builder.context
         isBottomSheet = builder.isBottomSheet
         imagesColor = builder.imagesColor
         optionsTextColor = builder.optionsTextColor
@@ -165,7 +161,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                                 // Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
                                 for (x in 0 until it.itemCount) {
                                     it.getItemAt(x).uri?.let { uri ->
-                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, context!!, File(uri.toString())), FileUtil.getMimeType(uri, context!!), FileUtil.getFileSize(uri, context!!)))
+                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, activity!!, File(uri.toString())), FileUtil.getMimeType(uri, activity!!), FileUtil.getFileSize(uri, activity!!)))
                                     }
 
                                 }
@@ -175,7 +171,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
                             val fileUri = data.data
                             fileUri?.let {
-                                list.add(prepareAttachment(it, FileUtil.getFileDisplayName(it, context!!, File(it.toString())), FileUtil.getMimeType(it, context!!), FileUtil.getFileSize(it, context!!)))
+                                list.add(prepareAttachment(it, FileUtil.getFileDisplayName(it, activity!!, File(it.toString())), FileUtil.getMimeType(it, activity!!), FileUtil.getFileSize(it, activity!!)))
                             }
                         }
                     }
@@ -185,7 +181,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     val fileUri = Uri.fromFile(cameraFile)
                     val file = File(fileUri.toString())
                     val displayName = FileUtil.getFileDisplayName(fileUri, activity as AppCompatActivity, file)
-                    list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, context!!), FileUtil.getFileSize(fileUri, context!!)))
+                    list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity!!), FileUtil.getFileSize(fileUri, activity!!)))
 
 
                 }
@@ -234,18 +230,16 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     /**
      * Initiates AttachmentManager object for you
      */
-    data class AttachmentBuilder(var context: Context) {
+    data class AttachmentBuilder(var activity: AppCompatActivity) {
 
-        var activity: AppCompatActivity? = null
+
         var fragment: Fragment? = null
-        var title: String? = context.getString(R.string.m_choose)
+        var title: String? = activity.getString(R.string.m_choose)
         var isMultiple: Boolean = false
         var isBottomSheet: Boolean = false
         var imagesColor: Int? = null
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
-
-        fun activity(activity: AppCompatActivity?) = apply { this.activity = activity }
         fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
         /**
          * @param title of dialog or bottom sheet

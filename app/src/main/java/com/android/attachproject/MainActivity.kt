@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
-                .activity(this) // container activity
                 .fragment(null) // pass fragment reference if you are in fragment
                 .setUiTitle(getString(R.string.m_choose)) // title of dialog or bottom sheet
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
