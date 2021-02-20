@@ -15,6 +15,7 @@ import com.mirza.attachmentmanager.fragments.DialogAction
 import com.mirza.attachmentmanager.models.AttachmentDetail
 import com.mirza.attachmentmanager.utils.FileUtil
 import java.io.File
+import java.lang.ref.WeakReference
 
 enum class HideOption {
     GALLERY, CAMERA, DOCUMENT
@@ -28,8 +29,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     }
 
     private var title: String? = ""
-    private var activity: AppCompatActivity? = null
-    private var fragment: Fragment? = null
+    private var activity: WeakReference<AppCompatActivity>? = null
+    private var fragment: WeakReference<Fragment>? = null
     private var selection: DialogAction? = null
     private var isMultiple = false
     private var cameraFile: File? = null
@@ -54,7 +55,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Call this method to open attachment selection
      */
     fun openSelection() {
-        activity?.let {
+        activity?.get()?.let {
 
             if (isBottomSheet) {
                 val attachmentFragmentSheet = AttachmentBottomSheet(title, hideOptions) { action ->
@@ -133,15 +134,15 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use below three methods to interact with AttachmentManager directly without any dialog or bottom sheet
      */
     fun startCamera() {
-        openCamera(activity, fragment, AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+        openCamera(activity?.get(), fragment?.get(), AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
     }
 
     fun openGallery() {
-        openGallery(activity, fragment, AttachmentUtil.PICK_PHOTO_CODE)
+        openGallery(activity?.get(), fragment?.get(), AttachmentUtil.PICK_PHOTO_CODE)
     }
 
     fun openFileSystem() {
-        openFileSystem(activity, fragment, AttachmentUtil.FILE_CODE)
+        openFileSystem(activity?.get(), fragment?.get(), AttachmentUtil.FILE_CODE)
     }
 
 
@@ -161,7 +162,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                                 // Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
                                 for (x in 0 until it.itemCount) {
                                     it.getItemAt(x).uri?.let { uri ->
-                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, activity!!, File(uri.toString())), FileUtil.getMimeType(uri, activity!!), FileUtil.getFileSize(uri, activity!!)))
+                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, activity?.get()!!, File(uri.toString())), FileUtil.getMimeType(uri, activity?.get()!!), FileUtil.getFileSize(uri, activity?.get()!!)))
                                     }
 
                                 }
@@ -171,7 +172,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
                             val fileUri = data.data
                             fileUri?.let {
-                                list.add(prepareAttachment(it, FileUtil.getFileDisplayName(it, activity!!, File(it.toString())), FileUtil.getMimeType(it, activity!!), FileUtil.getFileSize(it, activity!!)))
+                                list.add(prepareAttachment(it, FileUtil.getFileDisplayName(it, activity?.get()!!, File(it.toString())), FileUtil.getMimeType(it, activity?.get()!!), FileUtil.getFileSize(it, activity?.get()!!)))
                             }
                         }
                     }
@@ -180,8 +181,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
                     val fileUri = Uri.fromFile(cameraFile)
                     val file = File(fileUri.toString())
-                    val displayName = FileUtil.getFileDisplayName(fileUri, activity as AppCompatActivity, file)
-                    list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity!!), FileUtil.getFileSize(fileUri, activity!!)))
+                    val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, file)
+                    list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity?.get()!!), FileUtil.getFileSize(fileUri, activity?.get()!!)))
 
 
                 }
@@ -230,17 +231,18 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     /**
      * Initiates AttachmentManager object for you
      */
-    data class AttachmentBuilder(var activity: AppCompatActivity) {
+    data class AttachmentBuilder(private var activityContext: AppCompatActivity) {
 
 
-        var fragment: Fragment? = null
-        var title: String? = activity.getString(R.string.m_choose)
+        var fragment:WeakReference<Fragment>? = null
+        var title: String? = activityContext.getString(R.string.m_choose)
+        var activity: WeakReference<AppCompatActivity>? = null
         var isMultiple: Boolean = false
         var isBottomSheet: Boolean = false
         var imagesColor: Int? = null
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
-        fun fragment(fragment: Fragment?) = apply { this.fragment = fragment }
+        fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
         /**
          * @param title of dialog or bottom sheet
          */
@@ -253,7 +255,9 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun hide(option: HideOption?) = apply { this.hideOption = option }
 
         fun build() = AttachmentManager(this)
-
+        init {
+            activity = WeakReference(activityContext)
+        }
     }
 
 
