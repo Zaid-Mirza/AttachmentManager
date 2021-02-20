@@ -12,6 +12,10 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import com.mirza.attachmentmanager.models.AttachmentDetail
+//import okhttp3.MediaType
+//import okhttp3.MultipartBody
+//import okhttp3.RequestBody
 import java.io.*
 
 
@@ -55,6 +59,7 @@ object FileUtil {
         var name1 = name
 
         var file = File(directory, name1)
+
 
         if (file.exists()) {
             var fileName: String = name1!!
@@ -295,6 +300,28 @@ object FileUtil {
         return "com.google.android.apps.docs.storage" == uri.authority
     }
 
+//    fun getMultiParts(attachments: ArrayList<AttachmentDetail>, context: Context, paraName: String): ArrayList<MultipartBody.Part> {
+//        val list = ArrayList<MultipartBody.Part>()
+//
+//        attachments.forEach { attachment ->
+//            attachment.uri?.let { uri ->
+//                val file: File? = getFileFromUri(uri, context);
+//
+//                file?.let {
+//                    val mimeType = getMimeType(uri, context)
+//                    mimeType?.let {
+//                        val requestBody = RequestBody.create(MediaType.parse(mimeType), file)
+//                        val part = MultipartBody.Part.createFormData(paraName + System.currentTimeMillis(), file.name, requestBody)
+//                        list.add(part)
+//                    }
+//                }
+//
+//            }
+//
+//        }
+//
+//        return list
+//    }
 
     private fun getFileFromUri(uri: Uri, context: Context): File? {
         val path = getPath(uri, context)
