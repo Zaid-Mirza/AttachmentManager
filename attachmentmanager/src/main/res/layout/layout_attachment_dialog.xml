@@ -47,7 +47,7 @@
                     android:layout_weight="0.2"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/m_close_dialog_txt"
-                    android:src="@drawable/ic_close_black_24dp" />
+                    android:src="@drawable/ic_am_close" />
             </LinearLayout>
 
             <LinearLayout
@@ -71,7 +71,7 @@
                         android:id="@+id/gallary_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_photo_album_black_24dp"
+                        android:src="@drawable/ic_am_photo"
                         android:tint="?attr/colorPrimary"
                         tools:ignore="ContentDescription" />
 
@@ -98,7 +98,7 @@
                         android:id="@+id/camera_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_camera_alt_black_24dp"
+                        android:src="@drawable/ic_am_camera"
                         android:tint="?attr/colorPrimary" />
 
                     <TextView
@@ -124,7 +124,7 @@
                         android:id="@+id/file_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_attach_file_black_24dp"
+                        android:src="@drawable/ic_am_attach_file"
                         android:tint="?attr/colorPrimary" />
 
                     <TextView

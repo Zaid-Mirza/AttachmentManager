@@ -197,7 +197,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use this method from onRequestPermissionsResult within your activity or fragment
      * It will handle permission results for you
      */
-    fun handlePermissionResponse(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    fun handlePermissionResponse(requestCode: Int, permissions: Array< String>, grantResults: IntArray) {
         when (requestCode) {
             AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
