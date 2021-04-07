@@ -47,7 +47,7 @@ public class Main2Activity extends AppCompatActivity {
     @Override
         protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data);
+            ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(getApplicationContext(),requestCode, resultCode, data);
             Toast.makeText(this, (list != null ? list.size() : 0) + "", Toast.LENGTH_LONG).show();
         }
 

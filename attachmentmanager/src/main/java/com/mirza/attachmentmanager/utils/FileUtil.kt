@@ -1,10 +1,15 @@
 package com.mirza.attachmentmanager.utils
 
+//import okhttp3.MediaType
+//import okhttp3.MultipartBody
+//import okhttp3.RequestBody
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -12,10 +17,6 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
-import com.mirza.attachmentmanager.models.AttachmentDetail
-//import okhttp3.MediaType
-//import okhttp3.MultipartBody
-//import okhttp3.RequestBody
 import java.io.*
 
 
@@ -204,6 +205,45 @@ object FileUtil {
         }
 
         return null
+    }
+
+
+    fun saveBitmapToFile(context: Context,file: Uri): Uri? {
+        return try {
+
+            // BitmapFactory options to downsize the image
+            val o: BitmapFactory.Options = BitmapFactory.Options()
+            o.inJustDecodeBounds = true
+            o.inSampleSize = 6
+            // factor of downsizing the image
+            var inputStream = context.contentResolver.openInputStream(file)
+            //Bitmap selectedBitmap = null;
+            BitmapFactory.decodeStream(inputStream, null, o)
+            inputStream.close()
+
+            // The new size we want to scale to
+            val REQUIRED_SIZE = 50
+
+            // Find the correct scale value. It should be the power of 2.
+            var scale = 1
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2
+            }
+            val o2: BitmapFactory.Options = BitmapFactory.Options()
+            o2.inSampleSize = scale
+            inputStream = context.contentResolver.openInputStream(file)
+            val selectedBitmap: Bitmap? = BitmapFactory.decodeStream(inputStream, null, o2)
+            inputStream.close()
+
+            // here i override the original image file
+
+            val outputStream = context.contentResolver.openOutputStream(file)
+            selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            file
+        } catch (e: java.lang.Exception) {
+            null
+        }
     }
 
     private fun getDriveFilePath(uri: Uri, context: Context): String {

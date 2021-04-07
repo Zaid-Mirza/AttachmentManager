@@ -35,11 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val list = attachmentManager?.manipulateAttachments(requestCode, resultCode, data)
+        val list = attachmentManager?.manipulateAttachments(applicationContext,requestCode, resultCode, data)
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults)
     }
 

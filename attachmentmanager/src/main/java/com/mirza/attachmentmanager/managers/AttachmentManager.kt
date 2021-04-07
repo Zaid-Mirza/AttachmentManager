@@ -1,5 +1,6 @@
 package com.mirza.attachmentmanager.managers
 
+import android.R.attr.bitmap
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -10,12 +11,13 @@ import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
 import com.mirza.attachmentmanager.fragments.AttachmentBottomSheet
 import com.mirza.attachmentmanager.fragments.AttachmentFragment
-import com.mirza.attachmentmanager.utils.AttachmentUtil
 import com.mirza.attachmentmanager.fragments.DialogAction
 import com.mirza.attachmentmanager.models.AttachmentDetail
+import com.mirza.attachmentmanager.utils.AttachmentUtil
 import com.mirza.attachmentmanager.utils.FileUtil
 import java.io.File
 import java.lang.ref.WeakReference
+
 
 enum class HideOption {
     GALLERY, CAMERA, DOCUMENT
@@ -150,7 +152,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use this method from onActivityResult within your activity or fragment
      * @return List of AttachmentDetail objects
      */
-    fun manipulateAttachments(requestCode: Int, resultCode: Int, data: Intent?): ArrayList<AttachmentDetail>? {
+    fun manipulateAttachments(context: Context, requestCode: Int, resultCode: Int, data: Intent?): ArrayList<AttachmentDetail>? {
         val list = ArrayList<AttachmentDetail>()
         if (resultCode == RESULT_OK) {
             when (requestCode) {
@@ -179,10 +181,17 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                 }
                 AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
 
-                    val fileUri = Uri.fromFile(cameraFile)
-                    val file = File(fileUri.toString())
-                    val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, file)
-                    list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity?.get()!!), FileUtil.getFileSize(fileUri, activity?.get()!!)))
+                    cameraFile?.let {
+
+                        var fileUri = Uri.fromFile(cameraFile)
+                        val file = File(fileUri.toString())
+
+                        FileUtil.saveBitmapToFile(context = context, file = fileUri)?.let {
+                            fileUri = it
+                        }
+                        val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, file)
+                        list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity?.get()!!), FileUtil.getFileSize(fileUri, activity?.get()!!)))
+                    }
 
 
                 }
@@ -197,7 +206,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use this method from onRequestPermissionsResult within your activity or fragment
      * It will handle permission results for you
      */
-    fun handlePermissionResponse(requestCode: Int, permissions: Array< String>, grantResults: IntArray) {
+    fun handlePermissionResponse(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -234,7 +243,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     data class AttachmentBuilder(private var activityContext: AppCompatActivity) {
 
 
-        var fragment:WeakReference<Fragment>? = null
+        var fragment: WeakReference<Fragment>? = null
         var title: String? = activityContext.getString(R.string.m_choose)
         var activity: WeakReference<AppCompatActivity>? = null
         var isMultiple: Boolean = false
@@ -243,6 +252,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
         fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
+
         /**
          * @param title of dialog or bottom sheet
          */
@@ -255,6 +265,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun hide(option: HideOption?) = apply { this.hideOption = option }
 
         fun build() = AttachmentManager(this)
+
         init {
             activity = WeakReference(activityContext)
         }
