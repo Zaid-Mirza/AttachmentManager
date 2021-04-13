@@ -60,7 +60,9 @@ object AttachmentUtil {
 
                     "image/png",
                     "image/jpg",
-                    "image/jpeg"
+                    "image/jpeg",
+                    "video/mp4",
+                    "video/MP2T"
             )
             val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             intent.putExtra(Intent.EXTRA_MIME_TYPES, types)

@@ -1,14 +1,19 @@
 package com.android.attachproject
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity;
 import com.mirza.attachmentmanager.managers.AttachmentManager
 import com.mirza.attachmentmanager.managers.HideOption
 
 import kotlinx.android.synthetic.main.activity_main.*
+import org.apache.commons.io.IOUtils
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,11 +41,22 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val list = attachmentManager?.manipulateAttachments(applicationContext,requestCode, resultCode, data)
+
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults)
     }
-
+    fun convertFileTo64base(context: Context, uri: Uri?): String? {
+        var byteArray = ByteArray(0)
+        try {
+            val inputStream = context.contentResolver.openInputStream(uri!!)
+            byteArray = IOUtils.toByteArray(inputStream)
+            inputStream!!.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
 }
