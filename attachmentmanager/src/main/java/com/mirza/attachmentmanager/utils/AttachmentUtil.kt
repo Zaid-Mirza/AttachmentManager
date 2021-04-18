@@ -3,6 +3,9 @@ package com.mirza.attachmentmanager.utils
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -11,7 +14,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
 import com.mirza.attachmentmanager.models.Tuple
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 object AttachmentUtil {
     const val APP_TAG = "AttachmentManager"
@@ -36,6 +41,25 @@ object AttachmentUtil {
         return File(mediaStorageDir.path + File.separator + fileName)
     }
 
+    fun resizeImage(photoFileName: String, photoUri: Uri, desiredWidth: Int, context: Context): File {
+
+        // by this point we have the camera photo on disk
+        val rawTakenImage = BitmapFactory.decodeFile(photoUri.path)
+        val resizedBitmap: Bitmap = ImageUtils.scaleToFitWidth(rawTakenImage, desiredWidth)
+        // Configure byte output stream
+        val bytes = ByteArrayOutputStream()
+        // Compress the image further
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, bytes)
+        // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
+        val resizedFile = getPhotoFileUri("resized $photoFileName", context)
+        resizedFile.createNewFile()
+        val fos = FileOutputStream(resizedFile)
+        // Write the bytes of the bitmap to file
+        fos.write(bytes.toByteArray())
+        fos.close()
+        return resizedFile
+    }
+
     fun onCamera(context: Context): Tuple {
         // create Intent to take a picture and return control to the caller
 
@@ -46,6 +70,7 @@ object AttachmentUtil {
 
         val fileProvider = FileProvider.getUriForFile(context, context.packageName + ".attachmentmanager", photoFile)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+
 
         val tuple = Tuple()
         tuple.intent = intent

@@ -15,8 +15,10 @@ import com.mirza.attachmentmanager.fragments.DialogAction
 import com.mirza.attachmentmanager.models.AttachmentDetail
 import com.mirza.attachmentmanager.utils.AttachmentUtil
 import com.mirza.attachmentmanager.utils.FileUtil
+import id.zelory.compressor.Compressor
 import java.io.File
 import java.lang.ref.WeakReference
+import kotlin.coroutines.CoroutineContext
 
 
 enum class HideOption {
@@ -40,6 +42,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var imagesColor: Int? = null
     private var optionsTextColor: Int? = null
     private var hideOptions: HideOption? = null
+    private var maxCameraPhotoSize: Long? = null
 
 
     init {
@@ -51,6 +54,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         imagesColor = builder.imagesColor
         optionsTextColor = builder.optionsTextColor
         hideOptions = builder.hideOption
+        maxCameraPhotoSize = builder.maxCameraPhotoSize
     }
 
     /**
@@ -183,13 +187,20 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
                     cameraFile?.let {
 
-                        var fileUri = Uri.fromFile(cameraFile)
-                        val file = File(fileUri.toString())
 
-                        FileUtil.saveBitmapToFile(context = context, file = fileUri)?.let {
-                            fileUri = it
+                        var fileUri = Uri.fromFile(cameraFile)
+
+
+                        val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, it)
+                        maxCameraPhotoSize?.let {
+                            if (FileUtil.getFileSize(fileUri, activity?.get()!!) > it) {
+                                // Resize Image
+                                cameraFile = AttachmentUtil.resizeImage(displayName, fileUri, 700, context)
+                                fileUri = Uri.fromFile(cameraFile)
+                            }
                         }
-                        val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, file)
+
+
                         list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity?.get()!!), FileUtil.getFileSize(fileUri, activity?.get()!!)))
                     }
 
@@ -251,6 +262,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var imagesColor: Int? = null
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
+
+        var maxCameraPhotoSize: Long? = null
         fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
 
         /**
@@ -263,6 +276,9 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun setImagesColor(imagesColor: Int) = apply { this.imagesColor = imagesColor }
         fun setOptionsTextColor(textColor: Int) = apply { this.optionsTextColor = textColor }
         fun hide(option: HideOption?) = apply { this.hideOption = option }
+        fun setMaxCameraPhotoSize(maxSize: Long) = apply {
+            maxCameraPhotoSize = maxSize
+        }
 
         fun build() = AttachmentManager(this)
 

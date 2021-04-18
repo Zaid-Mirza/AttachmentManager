@@ -17,6 +17,7 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import androidx.core.net.toUri
 import java.io.*
 
 
@@ -208,7 +209,7 @@ object FileUtil {
     }
 
 
-    fun saveBitmapToFile(context: Context,file: Uri): Uri? {
+    fun saveBitmapToFile(context: Context,file: File): File? {
         return try {
 
             // BitmapFactory options to downsize the image
@@ -216,13 +217,13 @@ object FileUtil {
             o.inJustDecodeBounds = true
             o.inSampleSize = 6
             // factor of downsizing the image
-            var inputStream = context.contentResolver.openInputStream(file)
+            var inputStream = context.contentResolver.openInputStream(file.toUri())
             //Bitmap selectedBitmap = null;
             BitmapFactory.decodeStream(inputStream, null, o)
-            inputStream.close()
+            inputStream?.close()
 
             // The new size we want to scale to
-            val REQUIRED_SIZE = 50
+            val REQUIRED_SIZE = 75
 
             // Find the correct scale value. It should be the power of 2.
             var scale = 1
@@ -232,14 +233,15 @@ object FileUtil {
             }
             val o2: BitmapFactory.Options = BitmapFactory.Options()
             o2.inSampleSize = scale
-            inputStream = context.contentResolver.openInputStream(file)
+            inputStream = context.contentResolver.openInputStream(file.toUri())
             val selectedBitmap: Bitmap? = BitmapFactory.decodeStream(inputStream, null, o2)
-            inputStream.close()
+            inputStream?.close()
 
             // here i override the original image file
-
-            val outputStream = context.contentResolver.openOutputStream(file)
-            selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            file.createNewFile()
+            val outputStream = context.contentResolver.openOutputStream(file.toUri())
+            selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 20, outputStream)
+            outputStream?.close()
             file
         } catch (e: java.lang.Exception) {
             null
