@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 .setOptionsTextColor(android.R.color.holo_green_light)
                 .setImagesColor(R.color.colorAccent)
                 .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                .setMaxCameraPhotoSize(200000)
+                .setMaxCameraPhotoSize(200000) // Set max camera photo size in bytes
                 .build()
         fab.setOnClickListener {
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val list = attachmentManager?.manipulateAttachments(applicationContext,requestCode, resultCode, data)
+        val list = attachmentManager?.manipulateAttachments(applicationContext, requestCode, resultCode, data)
 
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults)
     }
+
     fun convertFileTo64base(context: Context, uri: Uri?): String? {
         var byteArray = ByteArray(0)
         try {

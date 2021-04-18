@@ -37,6 +37,7 @@ public class Main2Activity extends AppCompatActivity {
                 .allowMultiple(true) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .hide(HideOption.DOCUMENT) // You can hide any option do you want
+                .setMaxCameraPhotoSize(200000) // Set max camera photo size in bytes
                 .build(); // Hide any of the three options
 
         Toast.makeText(this, "", Toast.LENGTH_LONG).show();
