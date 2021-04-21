@@ -1,6 +1,5 @@
 package com.mirza.attachmentmanager.managers
 
-import android.R.attr.bitmap
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -15,10 +14,8 @@ import com.mirza.attachmentmanager.fragments.DialogAction
 import com.mirza.attachmentmanager.models.AttachmentDetail
 import com.mirza.attachmentmanager.utils.AttachmentUtil
 import com.mirza.attachmentmanager.utils.FileUtil
-import id.zelory.compressor.Compressor
 import java.io.File
 import java.lang.ref.WeakReference
-import kotlin.coroutines.CoroutineContext
 
 
 enum class HideOption {
@@ -42,7 +39,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var imagesColor: Int? = null
     private var optionsTextColor: Int? = null
     private var hideOptions: HideOption? = null
-    private var maxCameraPhotoSize: Long? = null
+    private var maxPhotoSize: Long? = null
 
 
     init {
@@ -54,7 +51,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         imagesColor = builder.imagesColor
         optionsTextColor = builder.optionsTextColor
         hideOptions = builder.hideOption
-        maxCameraPhotoSize = builder.maxCameraPhotoSize
+        maxPhotoSize = builder.maxPhotoSize
     }
 
     /**
@@ -168,7 +165,13 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                                 // Toast.makeText(context!!, it.itemCount.toString(), Toast.LENGTH_SHORT).show()
                                 for (x in 0 until it.itemCount) {
                                     it.getItemAt(x).uri?.let { uri ->
-                                        list.add(prepareAttachment(uri, FileUtil.getFileDisplayName(uri, activity?.get()!!, File(uri.toString())), FileUtil.getMimeType(uri, activity?.get()!!), FileUtil.getFileSize(uri, activity?.get()!!)))
+                                        var uriFromFile = uri
+                                        if (requestCode == AttachmentUtil.PICK_PHOTO_CODE) {
+                                            checkAndAdjustImageSize(uri, context)?.let {
+                                                uriFromFile = it
+                                            }
+                                        }
+                                        list.add(prepareAttachment(uriFromFile, FileUtil.getFileDisplayName(uriFromFile, activity?.get()!!, File(uriFromFile.toString())), FileUtil.getMimeType(uriFromFile, activity?.get()!!), FileUtil.getFileSize(uriFromFile, activity?.get()!!)))
                                     }
 
                                 }
@@ -177,8 +180,15 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                         } else {
 
                             val fileUri = data.data
-                            fileUri?.let {
-                                list.add(prepareAttachment(it, FileUtil.getFileDisplayName(it, activity?.get()!!, File(it.toString())), FileUtil.getMimeType(it, activity?.get()!!), FileUtil.getFileSize(it, activity?.get()!!)))
+                            fileUri?.let { uri ->
+                                var uriFromFile = uri
+                                if (requestCode == AttachmentUtil.PICK_PHOTO_CODE) {
+                                    checkAndAdjustImageSize(uri, context)?.let {
+                                        uriFromFile = it
+                                    }
+                                }
+
+                                list.add(prepareAttachment(uriFromFile, FileUtil.getFileDisplayName(uriFromFile, activity?.get()!!, File(uriFromFile.toString())), FileUtil.getMimeType(uriFromFile, activity?.get()!!), FileUtil.getFileSize(uriFromFile, activity?.get()!!)))
                             }
                         }
                     }
@@ -187,17 +197,11 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
                     cameraFile?.let {
 
-
                         var fileUri = Uri.fromFile(cameraFile)
-
-
                         val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, it)
-                        maxCameraPhotoSize?.let {
-                            if (FileUtil.getFileSize(fileUri, activity?.get()!!) > it) {
-                                // Resize Image
-                                cameraFile = AttachmentUtil.resizeImage(displayName, fileUri, 700, context)
-                                fileUri = Uri.fromFile(cameraFile)
-                            }
+                        // Resize Image
+                        checkAndAdjustImageSize(fileUri, context)?.let {
+                            fileUri = it
                         }
 
 
@@ -212,6 +216,18 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         return list
     }
 
+
+    private fun checkAndAdjustImageSize(uri: Uri, context: Context): Uri? {
+        maxPhotoSize?.let {
+            if (FileUtil.getFileSize(uri, activity?.get()!!) > it) {
+                val file = AttachmentUtil.resizeImage(uri, 700, context)
+                return Uri.fromFile(file)
+            }
+        }
+
+        return null
+
+    }
 
     /**
      * Use this method from onRequestPermissionsResult within your activity or fragment
@@ -263,7 +279,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
 
-        var maxCameraPhotoSize: Long? = null
+        var maxPhotoSize: Long? = null
         fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
 
         /**
@@ -276,8 +292,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun setImagesColor(imagesColor: Int) = apply { this.imagesColor = imagesColor }
         fun setOptionsTextColor(textColor: Int) = apply { this.optionsTextColor = textColor }
         fun hide(option: HideOption?) = apply { this.hideOption = option }
-        fun setMaxCameraPhotoSize(maxSize: Long) = apply {
-            maxCameraPhotoSize = maxSize
+        fun setMaxPhotoSize(maxSize: Long) = apply {
+            maxPhotoSize = maxSize
         }
 
         fun build() = AttachmentManager(this)

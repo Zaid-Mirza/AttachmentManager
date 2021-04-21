@@ -41,17 +41,19 @@ object AttachmentUtil {
         return File(mediaStorageDir.path + File.separator + fileName)
     }
 
-    fun resizeImage(photoFileName: String, photoUri: Uri, desiredWidth: Int, context: Context): File {
+    fun resizeImage( photoUri: Uri, desiredWidth: Int, context: Context): File {
 
         // by this point we have the camera photo on disk
-        val rawTakenImage = BitmapFactory.decodeFile(photoUri.path)
+        val inputStream = context.contentResolver.openInputStream(photoUri)
+        val rawTakenImage = BitmapFactory.decodeStream(inputStream)
+
         val resizedBitmap: Bitmap = ImageUtils.scaleToFitWidth(rawTakenImage, desiredWidth)
         // Configure byte output stream
         val bytes = ByteArrayOutputStream()
         // Compress the image further
         resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, bytes)
         // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
-        val resizedFile = getPhotoFileUri("resized $photoFileName", context)
+        val resizedFile = getPhotoFileUri("IMGR_" + System.currentTimeMillis() + ".jpg", context)
         resizedFile.createNewFile()
         val fos = FileOutputStream(resizedFile)
         // Write the bytes of the bitmap to file

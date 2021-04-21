@@ -2,7 +2,6 @@ package com.android.attachproject
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -13,7 +12,6 @@ import com.mirza.attachmentmanager.managers.HideOption
 
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.io.IOUtils
-import java.io.File
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 .setOptionsTextColor(android.R.color.holo_green_light)
                 .setImagesColor(R.color.colorAccent)
                 .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                .setMaxCameraPhotoSize(200000) // Set max camera photo size in bytes
+                .setMaxPhotoSize(200000) // Set max camera photo size in bytes
                 .build()
         fab.setOnClickListener {
 
