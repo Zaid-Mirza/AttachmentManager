@@ -40,7 +40,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private var optionsTextColor: Int? = null
     private var hideOptions: HideOption? = null
     private var maxPhotoSize: Long? = null
-
+    private var galleryMimeTypes: Array<String>? = null
+    private var filesMimeTypes: Array<String>? = null
 
     init {
         activity = builder.activity
@@ -52,6 +53,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         optionsTextColor = builder.optionsTextColor
         hideOptions = builder.hideOption
         maxPhotoSize = builder.maxPhotoSize
+        galleryMimeTypes = builder.galleryMimeTypes
+        filesMimeTypes = builder.filesMimeTypes
     }
 
     /**
@@ -117,7 +120,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
     private fun openGallery(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
-            val intent = AttachmentUtil.onPhoto(activity!!, isMultiple)
+
+            val intent = AttachmentUtil.onPhoto(activity!!, isMultiple, galleryMimeTypes = galleryMimeTypes)
             AttachmentUtil.openGallery(intent, activity, fragment)
         }
     }
@@ -129,7 +133,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      */
     private fun openFileSystem(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
         if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
-            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple)
+            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple, filesMimeTypes)
         }
     }
 
@@ -166,7 +170,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                                 for (x in 0 until it.itemCount) {
                                     it.getItemAt(x).uri?.let { uri ->
                                         var uriFromFile = uri
-                                        if (requestCode == AttachmentUtil.PICK_PHOTO_CODE) {
+                                        if (requestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(uriFromFile, activity?.get()!!)?.contains("video", true) == false) {
                                             checkAndAdjustImageSize(uri, context)?.let {
                                                 uriFromFile = it
                                             }
@@ -182,7 +186,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                             val fileUri = data.data
                             fileUri?.let { uri ->
                                 var uriFromFile = uri
-                                if (requestCode == AttachmentUtil.PICK_PHOTO_CODE) {
+                                if (requestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(uriFromFile, activity?.get()!!)?.contains("video", true) == false) {
                                     checkAndAdjustImageSize(uri, context)?.let {
                                         uriFromFile = it
                                     }
@@ -278,6 +282,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var imagesColor: Int? = null
         var optionsTextColor: Int? = null
         var hideOption: HideOption? = null
+        var galleryMimeTypes: Array<String>? = null
+        var filesMimeTypes: Array<String>? = null
 
         var maxPhotoSize: Long? = null
         fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
@@ -295,6 +301,15 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         fun setMaxPhotoSize(maxSize: Long) = apply {
             maxPhotoSize = maxSize
         }
+
+        fun galleryMimeTypes(types: Array<String>) = apply {
+            galleryMimeTypes = types
+        }
+
+        fun filesMimeTypes(types: Array<String>) = apply {
+            filesMimeTypes = types
+        }
+
 
         fun build() = AttachmentManager(this)
 

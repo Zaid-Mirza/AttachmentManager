@@ -17,12 +17,21 @@ import com.mirza.attachmentmanager.models.Tuple
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.reflect.GenericArrayType
 
 object AttachmentUtil {
     const val APP_TAG = "AttachmentManager"
     const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1000
     const val PICK_PHOTO_CODE = 1001
     const val FILE_CODE = 125
+    val types = arrayOf(
+
+            "image/png",
+            "image/jpg",
+            "image/jpeg",
+            "video/mp4",
+            "video/MP2T"
+    )
 
     /**
      * @param fileName name of the image
@@ -41,7 +50,7 @@ object AttachmentUtil {
         return File(mediaStorageDir.path + File.separator + fileName)
     }
 
-    fun resizeImage( photoUri: Uri, desiredWidth: Int, context: Context): File {
+    fun resizeImage(photoUri: Uri, desiredWidth: Int, context: Context): File {
 
         // by this point we have the camera photo on disk
         val inputStream = context.contentResolver.openInputStream(photoUri)
@@ -80,32 +89,26 @@ object AttachmentUtil {
         return tuple
     }
 
-    fun onPhoto(context: Context, isMultiple: Boolean): Intent {
+    fun onPhoto(context: Context, isMultiple: Boolean, galleryMimeTypes: Array<String>? = types): Intent {
         // Create intent for picking a photo from the gallery
-        if (isMultiple) {
-            val types = arrayOf(
 
-                    "image/png",
-                    "image/jpg",
-                    "image/jpeg",
-                    "video/mp4",
-                    "video/MP2T"
-            )
-            val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, types)
-            return intent
-        } else
-            return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+
+        intent.type = galleryMimeTypes?.joinToString(separator = ",") ?: types.joinToString(",")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, galleryMimeTypes)
+        return intent
+
     }
 
-    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?, isMultiple: Boolean?): Intent {
+    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?, isMultiple: Boolean?, fileMimeTypes: Array<String>?): Intent {
         val intent = Intent()
         intent.action = Intent.ACTION_OPEN_DOCUMENT
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple ?: false)
-        intent.type = if (FileUtil.mimeTypes.size == 1) FileUtil.mimeTypes[0] else "*/*"
-        if (FileUtil.mimeTypes.isNotEmpty()) {
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, FileUtil.mimeTypes)
+        val fileMimeTypes = fileMimeTypes ?: FileUtil.mimeTypes
+        intent.type = if (fileMimeTypes.size == 1) fileMimeTypes[0] else "*/*"
+        if (!fileMimeTypes.isNullOrEmpty()) {
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, fileMimeTypes)
         }
 
 

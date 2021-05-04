@@ -1,6 +1,7 @@
 package com.android.attachproject;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,6 +22,12 @@ public class Main2Activity extends AppCompatActivity {
 
 
     private AttachmentManager attachmentManager = null;
+    String[] gallery = {"image/png",
+            "image/jpg",
+            "image/jpeg"};
+    String[] files  = { "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
+            "application/pdf"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +40,10 @@ public class Main2Activity extends AppCompatActivity {
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(false) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
-                .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                .setMaxPhotoSize(200000) // Set max camera photo size in bytes
+                // You can hide any option do you want
+                .setMaxPhotoSize(200000) // Set max  photo size in bytes
+                .galleryMimeTypes(gallery)
+                .filesMimeTypes(files)
                 .build(); // Hide any of the three options
 
         Toast.makeText(this, "", Toast.LENGTH_LONG).show();
@@ -43,15 +52,33 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     @Override
-        protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(getApplicationContext(),requestCode, resultCode, data);
-            Toast.makeText(this, (list != null ? list.size() : 0) + "", Toast.LENGTH_LONG).show();
-        }
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(getApplicationContext(), requestCode, resultCode, data);
 
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (list != null && list.size() > 0) {
+            //  openFileInBrowser(list.get(0).getUri());
+        }
+        Toast.makeText(this, (list != null ? list.size() : 0) + "", Toast.LENGTH_LONG).show();
+    }
+
+    private void openFileInBrowser(Uri url) {
+        if (url != null) {
+            Intent browserIntent = null;
+            try {
+                browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setDataAndType(url, "application/pdf");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            startActivity(browserIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         attachmentManager.handlePermissionResponse(requestCode, permissions, grantResults);
     }
 }
