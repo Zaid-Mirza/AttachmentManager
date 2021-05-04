@@ -42,8 +42,8 @@ public class Main2Activity extends AppCompatActivity {
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
                 // You can hide any option do you want
                 .setMaxPhotoSize(200000) // Set max  photo size in bytes
-                .galleryMimeTypes(gallery)
-                .filesMimeTypes(files)
+                .galleryMimeTypes(gallery) // mime types for gallery
+                .filesMimeTypes(files) // mime types for files
                 .build(); // Hide any of the three options
 
         Toast.makeText(this, "", Toast.LENGTH_LONG).show();
