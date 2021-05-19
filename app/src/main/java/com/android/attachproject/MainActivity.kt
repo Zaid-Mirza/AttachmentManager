@@ -17,6 +17,12 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     private var attachmentManager: AttachmentManager? = null
+    var gallery = arrayOf("image/png",
+            "image/jpg",
+            "image/jpeg")
+    var files = arrayOf("application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .ppt & .pptx
+            "application/pdf")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,6 +37,8 @@ class MainActivity : AppCompatActivity() {
                 .setImagesColor(R.color.colorAccent)
                 .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .setMaxPhotoSize(200000) // Set max camera photo size in bytes
+                .galleryMimeTypes(gallery) // mime types for gallery
+                .filesMimeTypes(files) // mime types for files
                 .build()
         fab.setOnClickListener {
 

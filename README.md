@@ -85,7 +85,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.0.5'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.1.3'
 ```
 
 # Usage
@@ -97,37 +97,57 @@ allprojects {
 
 ```kotlin
 private var attachmentManager: AttachmentManager? = null
+var gallery = arrayOf("image/png",
+            "image/jpg",
+            "image/jpeg")
+    var files = arrayOf("application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .ppt & .pptx
+            "application/pdf")
 
 override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
-        attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass containing activity Context
-                .fragment(null) // pass fragment reference if you are in fragment
-                .setUiTitle("Choose File") // title of dialog or bottom sheet
-                .allowMultiple(true) // set true if you want make multiple selection, default is false
-                .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
-                .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                .build()
+       attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
+                       .fragment(null) // pass fragment reference if you are in fragment
+                       .setUiTitle(getString(R.string.m_choose)) // title of dialog or bottom sheet
+                       .allowMultiple(true) // set true if you want make multiple selection, default is false
+                       .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
+                       .setOptionsTextColor(android.R.color.holo_green_light)
+                       .setImagesColor(R.color.colorAccent)
+                       .hide(HideOption.DOCUMENT) // You can hide any option do you want
+                       .setMaxPhotoSize(200000) // Set max camera photo size in bytes
+                       .galleryMimeTypes(gallery) // mime types for gallery 
+                       .filesMimeTypes(files) // mime types for files
+                       .build()
        
     }
     
 ```
 **Java**
 ```java
- private AttachmentManager attachmentManager = null;
+    private AttachmentManager attachmentManager = null;
+    String[] gallery = {"image/png",
+            "image/jpg",
+            "image/jpeg"};
+    String[] files  = { "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
+            "application/pdf"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass containing activity Context
-                .fragment(null) // pass fragment reference if you are in fragment
-                .setUiTitle("Choose File") // title of dialog or bottom sheet
-                .allowMultiple(true) // set true if you want make multiple selection, default is false
-                .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
-                .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                .build();
+       attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
+                       .fragment(null) // pass fragment reference if you are in fragment
+                       .setUiTitle("Choose File") // title of dialog or bottom sheet
+                       .allowMultiple(false) // set true if you want make multiple selection, default is false
+                       .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                       // You can hide any option do you want
+                       .setMaxPhotoSize(200000) // Set max  photo size in bytes
+                       .galleryMimeTypes(gallery) // mime types for gallery
+                       .filesMimeTypes(files) // mime types for files
+                       .build(); // Hide any of the three options
     }
 ```
 
