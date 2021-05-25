@@ -105,6 +105,8 @@ object AttachmentUtil {
         intent.action = Intent.ACTION_OPEN_DOCUMENT
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple ?: false)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         val fileMimeTypes = fileMimeTypes ?: FileUtil.mimeTypes
         intent.type = if (fileMimeTypes.size == 1) fileMimeTypes[0] else "*/*"
         if (!fileMimeTypes.isNullOrEmpty()) {

@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
                 .setOptionsTextColor(android.R.color.holo_green_light)
                 .setImagesColor(R.color.colorAccent)
-                .hide(HideOption.DOCUMENT) // You can hide any option do you want
+                 // You can hide any option do you want
                 .setMaxPhotoSize(200000) // Set max camera photo size in bytes
                 .galleryMimeTypes(gallery) // mime types for gallery
                 .filesMimeTypes(files) // mime types for files

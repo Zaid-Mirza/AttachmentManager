@@ -4,6 +4,7 @@ package com.mirza.attachmentmanager.utils
 //import okhttp3.MultipartBody
 //import okhttp3.RequestBody
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
@@ -16,6 +17,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import java.io.*
@@ -125,18 +127,25 @@ object FileUtil {
                 }
             } else if (isDownloadsDocument(uri)) {
 
-                val id = DocumentsContract.getDocumentId(uri)
+                var id = DocumentsContract.getDocumentId(uri)
 
                 if (id != null && id.startsWith("raw:")) {
                     return id.substring(4)
                 }
 
+
                 val contentUriPrefixesToTry =
                         arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads")
 
                 for (contentUriPrefix in contentUriPrefixesToTry) {
-                    val contentUri =
-                            ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
+                    Log.e("DASHT",id.toString())
+                    var  contentUri: Uri? = null
+                    if(id != null && !id.startsWith("msf:")){
+                        contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
+                    }else{
+                        contentUri = uri
+                    }
+
                     try {
                         val path = getDataColumn(context, contentUri, null, null)
                         if (path != null) {
@@ -366,12 +375,12 @@ object FileUtil {
 //    }
 
     private fun getFileFromUri(uri: Uri, context: Context): File? {
-        val path = getPath(uri, context)
+        val path = null// getPath(uri, context)
         var file: File? = null
         if (path == null) {
             file = File((uri.toString()))
         } else {
-            file = File(path)
+           // file = File(path)
         }
         return file
     }
@@ -386,7 +395,7 @@ object FileUtil {
         val projection = arrayOf(column)
 
         try {
-            cursor = context.getContentResolver().query(
+            cursor = context.contentResolver.query(
                     uri, projection, selection, selectionArgs,
                     null
             );
@@ -396,7 +405,7 @@ object FileUtil {
                 return cursor.getString(column_index);
             }
         } catch (e: Exception) {
-
+            val ss = ""
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -406,22 +415,59 @@ object FileUtil {
 
     fun getFileSize(uri: Uri, context: Context): Long {
 
-        val file = getFileFromUri(uri, context)
-        var fileSize: Long? = null
-        // Get length of file in bytes
-        file?.let {
-            fileSize = file.length();
 
-            // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
-//            fileSize = fileSize?.let {
-//                (it / 1024) / 1024;
+//        val file = getFileFromUri(uri, context)
+//        var fileSize: Long? = null
+//        // Get length of file in bytes
+//        file?.let {
+//            fileSize = file.length();
 //
-//            }
+//            // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+////            fileSize = fileSize?.let {
+////                (it / 1024) / 1024;
+////
+////            }
+//        }
+
+
+
+       // return fileSize ?: 0;
+        return uri.length(context.contentResolver)
+    }
+
+   private fun Uri.length(contentResolver: ContentResolver)
+            : Long {
+
+        val assetFileDescriptor = try {
+            contentResolver.openAssetFileDescriptor(this, "r")
+        } catch (e: FileNotFoundException) {
+            null
+        }
+        // uses ParcelFileDescriptor#getStatSize underneath if failed
+        val length = assetFileDescriptor?.use { it.length } ?: -1L
+        if (length != -1L) {
+            return length
         }
 
-
-
-        return fileSize ?: 0;
+        // if "content://" uri scheme, try contentResolver table
+        if (scheme.equals(ContentResolver.SCHEME_CONTENT)) {
+            return contentResolver.query(this, arrayOf(OpenableColumns.SIZE), null, null, null)
+                    ?.use { cursor ->
+                        // maybe shouldn't trust ContentResolver for size: https://stackoverflow.com/questions/48302972/content-resolver-returns-wrong-size
+                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                        if (sizeIndex == -1) {
+                            return@use -1L
+                        }
+                        cursor.moveToFirst()
+                        return try {
+                            cursor.getLong(sizeIndex)
+                        } catch (_: Throwable) {
+                            -1L
+                        }
+                    } ?: -1L
+        } else {
+            return -1L
+        }
     }
 
 }
