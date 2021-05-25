@@ -135,13 +135,16 @@ object FileUtil {
 
 
                 val contentUriPrefixesToTry =
-                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads")
+                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads","content://downloads/all_downloads")
 
                 for (contentUriPrefix in contentUriPrefixesToTry) {
                     Log.e("DASHT",id.toString())
-
-                    val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
-
+                    var  contentUri: Uri? = null
+                    if(id != null && !id.startsWith("msf:")){
+                        contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
+                    }else{
+                        contentUri = uri
+                    }
 
                     try {
                         val path = getDataColumn(context, contentUri, null, null)
