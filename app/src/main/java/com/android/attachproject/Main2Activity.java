@@ -8,6 +8,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mirza.attachmentmanager.managers.AttachmentManager;
 import com.mirza.attachmentmanager.managers.HideOption;
 import com.mirza.attachmentmanager.models.AttachmentDetail;
+import com.mirza.attachmentmanager.utils.FileUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,7 @@ public class Main2Activity extends AppCompatActivity {
 
 
         if (list != null && list.size() > 0) {
-            //  openFileInBrowser(list.get(0).getUri());
+            FileUtil.INSTANCE.getPath(list.get(0).getUri(),getApplicationContext());
         }
         Toast.makeText(this, (list != null ? list.size() : 0) + "", Toast.LENGTH_LONG).show();
     }

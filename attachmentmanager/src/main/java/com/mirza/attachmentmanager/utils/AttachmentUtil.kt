@@ -92,9 +92,11 @@ object AttachmentUtil {
     fun onPhoto(context: Context, isMultiple: Boolean, galleryMimeTypes: Array<String>? = types): Intent {
         // Create intent for picking a photo from the gallery
 
-        val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
 
         intent.type = galleryMimeTypes?.joinToString(separator = ",") ?: types.joinToString(",")
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         intent.putExtra(Intent.EXTRA_MIME_TYPES, galleryMimeTypes)
         return intent
 
