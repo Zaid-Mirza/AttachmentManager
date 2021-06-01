@@ -135,14 +135,14 @@ object FileUtil {
 
 
                 val contentUriPrefixesToTry =
-                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads","content://downloads/all_downloads")
+                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads", "content://downloads/all_downloads")
 
                 for (contentUriPrefix in contentUriPrefixesToTry) {
-                    Log.e("DASHT",id.toString())
-                    var  contentUri: Uri? = null
-                    if(id != null && !id.startsWith("msf:")){
+                    Log.e("DASHT", id.toString())
+                    var contentUri: Uri? = null
+                    if (id != null && !id.startsWith("msf:")) {
                         contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
-                    }else{
+                    } else {
                         contentUri = uri
                     }
 
@@ -181,10 +181,12 @@ object FileUtil {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 }
 
+
                 val selection = "_id=?"
                 val selectionArgs = arrayOf(split[1])
 
-                return getDataColumn(context, contentUri!!, selection, selectionArgs)
+                return getDataColumn(context, contentUri
+                        ?: uri, if (contentUri == null) null else selection, if (contentUri == null) null else selectionArgs)
             }
             // MediaProvider
             // DownloadsProvider
@@ -218,7 +220,7 @@ object FileUtil {
     }
 
 
-    fun saveBitmapToFile(context: Context,file: File): File? {
+    fun saveBitmapToFile(context: Context, file: File): File? {
         return try {
 
             // BitmapFactory options to downsize the image
@@ -301,8 +303,8 @@ object FileUtil {
             e.printStackTrace()
         } finally {
             try {
-                if (`is` != null) `is`.close()
-                if (bos != null) bos.close()
+                `is`?.close()
+                bos?.close()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -380,7 +382,7 @@ object FileUtil {
         if (path == null) {
             file = File((uri.toString()))
         } else {
-           // file = File(path)
+            // file = File(path)
         }
         return file
     }
@@ -430,12 +432,11 @@ object FileUtil {
 //        }
 
 
-
-       // return fileSize ?: 0;
+        // return fileSize ?: 0;
         return uri.length(context.contentResolver)
     }
 
-   private fun Uri.length(contentResolver: ContentResolver)
+    private fun Uri.length(contentResolver: ContentResolver)
             : Long {
 
         val assetFileDescriptor = try {

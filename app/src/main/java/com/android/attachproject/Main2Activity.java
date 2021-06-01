@@ -23,9 +23,7 @@ public class Main2Activity extends AppCompatActivity {
 
 
     private AttachmentManager attachmentManager = null;
-    String[] gallery = {"image/png",
-            "image/jpg",
-            "image/jpeg"};
+    String[] gallery = {"image/*"};
     String[] files  = { "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
             "application/pdf"};
