@@ -39,7 +39,9 @@ public class Main2Activity extends AppCompatActivity {
                 .setUiTitle("Choose File") // title of dialog or bottom sheet
                 .allowMultiple(false) // set true if you want make multiple selection, default is false
                 .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
-                // You can hide any option do you want
+                .setOptionsTextColor(android.R.color.holo_green_light) // change text color
+                .setImagesColor(R.color.colorAccent) // change icon color
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
                 .setMaxPhotoSize(200000) // Set max  photo size in bytes
                 .galleryMimeTypes(gallery) // mime types for gallery
                 .filesMimeTypes(files) // mime types for files

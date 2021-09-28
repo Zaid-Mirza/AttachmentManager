@@ -53,13 +53,13 @@ class AttachmentFragment(val title: String? = null, private val optionTextColor:
 
         when (hideOption) {
             HideOption.GALLERY -> {
-                view.findViewById<LinearLayout>(R.id.image_linearLayout).visibility = View.GONE
+                imageLinearLayout.visibility = View.GONE
             }
             HideOption.CAMERA -> {
-                view.findViewById<LinearLayout>(R.id.camera_linearLayout).visibility = View.GONE
+                cameraLinearLayout.visibility = View.GONE
             }
             HideOption.DOCUMENT -> {
-                view.findViewById<LinearLayout>(R.id.file_linearLayout).visibility = View.GONE
+                fileLinearLayout.visibility = View.GONE
             }
         }
         title?.let {

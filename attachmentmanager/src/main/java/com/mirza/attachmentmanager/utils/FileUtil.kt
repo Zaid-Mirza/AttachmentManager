@@ -141,7 +141,7 @@ object FileUtil {
                     Log.e("DASHT", id.toString())
                     var contentUri: Uri? = null
                     if (id != null && !id.startsWith("msf:")) {
-                        contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
+                        contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id))
                     } else {
                         contentUri = uri
                     }
@@ -313,7 +313,7 @@ object FileUtil {
     }
 
     private fun getDocumentCacheDir(context: Context): File {
-        val dir = File(context.getCacheDir(), DOCUMENTS_DIR);
+        val dir = File(context.cacheDir, DOCUMENTS_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }

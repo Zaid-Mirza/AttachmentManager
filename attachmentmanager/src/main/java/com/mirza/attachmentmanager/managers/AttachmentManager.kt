@@ -64,7 +64,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         activity?.get()?.let {
 
             if (isBottomSheet) {
-                val attachmentFragmentSheet = AttachmentBottomSheet(title, hideOptions) { action ->
+                val attachmentFragmentSheet = AttachmentBottomSheet(title, optionsTextColor, imagesColor,hideOptions) { action ->
                     handleSelectionResponse(action)
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
