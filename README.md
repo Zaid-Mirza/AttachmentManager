@@ -1,7 +1,7 @@
 # AttachmentManager
 
 [![](https://jitpack.io/v/Zaid-Mirza/AttachmentManager.svg)](https://jitpack.io/#Zaid-Mirza/AttachmentManager)
-[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
+[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 <br/>
 <div align="center">
@@ -73,8 +73,24 @@ compileOptions {
 </paths>
 ```
 
+3. If you are targetting Android 11+, you need to add following queries in **AndroidManifest.xml**
+```xml
+<queries>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+  
+  ```
 
-3. Update  project level **build.gradle** file.
+4. Update  project level **build.gradle** file.
 ```groovy
 allprojects {
    repositories {
@@ -85,7 +101,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.1.3'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.1.8'
 ```
 
 # Usage
@@ -108,18 +124,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
-       attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
-                       .fragment(null) // pass fragment reference if you are in fragment
-                       .setUiTitle(getString(R.string.m_choose)) // title of dialog or bottom sheet
-                       .allowMultiple(true) // set true if you want make multiple selection, default is false
-                       .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
-                       .setOptionsTextColor(android.R.color.holo_green_light)
-                       .setImagesColor(R.color.colorAccent)
-                       .hide(HideOption.DOCUMENT) // You can hide any option do you want
-                       .setMaxPhotoSize(200000) // Set max camera photo size in bytes
-                       .galleryMimeTypes(gallery) // mime types for gallery 
-                       .filesMimeTypes(files) // mime types for files
-                       .build()
+      attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
+            .fragment(null) // pass fragment reference if you are in fragment
+            .setUiTitle("Choose File") // title of dialog or bottom sheet
+            .allowMultiple(false) // set true if you want make multiple selection, default is false
+            .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+            .setOptionsTextColor(android.R.color.holo_green_light) // change text color
+            .setImagesColor(R.color.colorAccent) // change icon color
+            .hide(HideOption.DOCUMENT) // You can hide any option do you want
+            .setMaxPhotoSize(200000) // Set max  photo size in bytes
+            .galleryMimeTypes(gallery) // mime types for gallery
+            .filesMimeTypes(files) // mime types for files
+            .build(); // Hide any of the three options
        
     }
     
@@ -139,15 +155,17 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        attachmentManager = new AttachmentManager.AttachmentBuilder(this) // must pass Context
-                       .fragment(null) // pass fragment reference if you are in fragment
-                       .setUiTitle("Choose File") // title of dialog or bottom sheet
-                       .allowMultiple(false) // set true if you want make multiple selection, default is false
-                       .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
-                       .hide(HideOption.DOCUMENT)// You can hide any option do you want
-                       .setMaxPhotoSize(200000) // Set max  photo size in bytes
-                       .galleryMimeTypes(gallery) // mime types for gallery
-                       .filesMimeTypes(files) // mime types for files
-                       .build(); // Hide any of the three options
+                .fragment(null) // pass fragment reference if you are in fragment
+                .setUiTitle("Choose File") // title of dialog or bottom sheet
+                .allowMultiple(false) // set true if you want make multiple selection, default is false
+                .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+                .setOptionsTextColor(android.R.color.holo_green_light) // change text color
+                .setImagesColor(R.color.colorAccent) // change icon color
+                .hide(HideOption.DOCUMENT) // You can hide any option do you want
+                .setMaxPhotoSize(200000) // Set max  photo size in bytes
+                .galleryMimeTypes(gallery) // mime types for gallery
+                .filesMimeTypes(files) // mime types for files
+                .build(); // Hide any of the three options
     }
 ```
 
@@ -168,7 +186,7 @@ attachmentManager.openSelection();
 ```kotlin
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val list = attachmentManager?.manipulateAttachments(requestCode, resultCode, data) // gives you neccessary detail about attachment like uri,name,size,path and mimtype
+        val list = attachmentManager?.manipulateAttachments(applicationContext,requestCode, resultCode, data) // gives you neccessary detail about attachment like uri,name,size,path and mimtype
         Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
     }
 ```
@@ -177,7 +195,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
  @Override
  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(requestCode, resultCode, data); // gives you neccessary detail about attachment like uri,name,size,path and mimtype
+        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(getApplicationContext(),requestCode, resultCode, data); // gives you neccessary detail about attachment like uri,name,size,path and mimtype
         Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
     }
 ```
