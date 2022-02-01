@@ -117,7 +117,7 @@ object AttachmentUtil {
         }
 
 
-        val list = activity?.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        val list = activity?.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_ALL)
         if (list?.size!! > 0) {
             if (fragmentContext == null) {
                 activity.startActivityForResult(
