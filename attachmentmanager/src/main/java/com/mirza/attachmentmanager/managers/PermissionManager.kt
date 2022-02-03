@@ -29,7 +29,6 @@ object PermissionManager {
         get() {
             val requiredPermissions = ArrayList<String>()
             requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
             return requiredPermissions
         }
@@ -56,7 +55,7 @@ object PermissionManager {
     }
 
     fun checkAndroidVersionAndPermission(appCompatActivity: AppCompatActivity?, fragment: Fragment?, pRequiredPermissions: ArrayList<String>, permissionCode: Int): Boolean {
-        if(SDK_INT >= Build.VERSION_CODES.R) {
+        if(SDK_INT >= Build.VERSION_CODES.R && false) {
             if(Environment.isExternalStorageManager()){
                 return true
             }

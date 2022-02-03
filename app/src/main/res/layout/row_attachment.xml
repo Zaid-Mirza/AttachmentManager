@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/attachment_imageView"
+        android:layout_width="@dimen/mid_box_size"
+        android:layout_height="@dimen/mid_box_size"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/small_margin"
+
+        android:contentDescription="@string/attachments_txt"
+        android:cropToPadding="true"
+        android:padding="@dimen/corner"
+        android:scaleType="fitXY"
+        tools:src="@drawable/ic_add" />
+
+
+    <ImageView
+        android:id="@+id/deleteAttachment_imageView"
+        android:layout_width="@dimen/count_answer_icon_size"
+        android:layout_height="@dimen/count_answer_icon_size"
+        android:layout_margin="@dimen/border"
+        android:background="@drawable/bg_circle"
+        android:backgroundTint="@color/red"
+        android:contentDescription="@string/close_txt"
+        android:padding="@dimen/border"
+        android:src="@drawable/ic_close"
+        app:tint="@color/secondaryColor1" />
+</RelativeLayout>

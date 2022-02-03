@@ -209,7 +209,6 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      */
     fun manipulateAttachments(
         context: Context,
-
         resultCode: Int,
         data: Intent?
     ): ArrayList<AttachmentDetail> {

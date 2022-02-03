@@ -1,30 +1,48 @@
 package com.android.attachproject
 
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.util.Base64
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.attachproject.databinding.ActivityMainBinding
 import com.mirza.attachmentmanager.managers.AttachmentManager
-import com.mirza.attachmentmanager.managers.HideOption
-import com.mirza.attachmentmanager.utils.AttachmentUtil
-import com.mirza.attachmentmanager.utils.FileUtil
-
+import com.mirza.attachmentmanager.models.AttachmentDetail
 import kotlinx.android.synthetic.main.activity_main.*
-import org.apache.commons.io.IOUtils
-import java.io.IOException
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private var attachmentManager: AttachmentManager? = null
+    private var attachmentAdapter: AttachmentAdapter? = null
+    private var allAttachments: ArrayList<AttachmentDetail>? = arrayListOf()
     private var mLauncher = registerForActivityResult(StartActivityForResult()) { result ->
 
-       val list =  attachmentManager?.manipulateAttachments(this,result.resultCode,result.data)
-        Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
+        allAttachments = attachmentAdapter?.getItems()
+
+
+        attachmentManager?.manipulateAttachments(this,result.resultCode,result.data)?.let {
+
+            if(it.size > 0 && it[0].mimeType?.contains("pdf",ignoreCase = true) == true) {
+                if (it.size > 0 && it[0].size!! <= 2000000) {
+                    allAttachments?.addAll(it)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "File size can't be more than 2MB",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }else if (it.size > 0){
+                allAttachments?.addAll(it)
+            }else{
+
+            }
+
+        }
+        attachmentAdapter?.updateData(allAttachments!!)
     }
     var gallery = arrayOf(
         "image/png",
@@ -39,7 +57,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(toolbar)
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
@@ -49,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
             .setOptionsTextColor(android.R.color.holo_green_light)
             .setImagesColor(R.color.colorAccent)
-            .hide(HideOption.DOCUMENT)// You can hide any option do you want
+//            .hide(HideOption.DOCUMENT)// You can hide any option do you want
             .setMaxPhotoSize(200000) // Set max camera photo size in bytes
             .galleryMimeTypes(gallery) // mime types for gallery
             .filesMimeTypes(files) // mime types for files
@@ -59,6 +78,14 @@ class MainActivity : AppCompatActivity() {
 
           attachmentManager?.openSelection(mLauncher)
           //  test()
+        }
+
+        binding.contentLayout.attachmentRecyclerView.layoutManager =
+            GridLayoutManager(this, 1, RecyclerView.HORIZONTAL, false)
+        attachmentAdapter = AttachmentAdapter(allAttachments!!)
+        binding.contentLayout.attachmentRecyclerView.adapter = attachmentAdapter
+        binding.contentLayout.addAttachmentImageView.setOnClickListener {
+            attachmentManager?.openSelection(mLauncher)
         }
     }
 

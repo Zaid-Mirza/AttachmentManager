@@ -5,6 +5,19 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/bg_circle.xml" value="0.15989583333333332" />
+        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.15989583333333332" />
+        <entry key="app/src/main/res/drawable/ic_close.xml" value="0.15989583333333332" />
+        <entry key="app/src/main/res/drawable/ic_pdf.xml" value="0.15989583333333332" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.16354166666666667" />
+        <entry key="app/src/main/res/layout/content_main.xml" value="0.16354166666666667" />
+        <entry key="app/src/main/res/layout/row_attachment.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

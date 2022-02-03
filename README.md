@@ -42,9 +42,6 @@ compileOptions {
 1. Add permissions and provider in **AndroidManifest.xml**
 
 ```xml
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-    tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 ```
@@ -103,7 +100,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:1.1.8'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:2.0.1'
 ```
 
 # Usage
