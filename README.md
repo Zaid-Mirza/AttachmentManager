@@ -13,8 +13,7 @@
 </div>
 <br/>
                                                                          
-You can use this light weight library to implement attachment feature (taking picture using camera, picking up file/image from gallery or file system or google drive).
-The library helps you to simplify all the process related to picking files without worrying about system permissions
+You can use this lightweight library to implement the attachment feature (taking pictures using the camera, picking up files/images from gallery or file system, or google drive). The library helps you to simplify all the processes related to picking files without worrying about system permissions
 
 ### Language Support
 
