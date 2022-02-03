@@ -43,6 +43,8 @@ compileOptions {
 
 ```xml
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+    tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 ```
@@ -73,7 +75,7 @@ compileOptions {
 </paths>
 ```
 
-3. If you are targetting Android 11+, you need to add following queries in **AndroidManifest.xml**
+3. If you are targeting Android 11+, you need to add following queries in **AndroidManifest.xml**
 ```xml
 <queries>
         <intent>
@@ -169,37 +171,36 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 ```
 
-
-3. Call **openSelection()** method to show selection UI
+3. Declare registerForActivityResult
 
 **Kotlin**
 ```kotlin
- attachmentManager?.openSelection()
+ private var mLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+
+    val list =  attachmentManager?.manipulateAttachments(this,result.resultCode,result.data)
+    Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
+}
 ````
 **Java**
 ```java
-attachmentManager.openSelection();
+ ActivityResultLauncher<Intent> mLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+
+        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(this,result.getResultCode(),result.getData());
+
+        });
 ```
-4. Override onActivityResult
+4. Call **openSelection()** method to show selection UI and pass ActivityResultLauncher
 
 **Kotlin**
 ```kotlin
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val list = attachmentManager?.manipulateAttachments(applicationContext,requestCode, resultCode, data) // gives you neccessary detail about attachment like uri,name,size,path and mimtype
-        Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
-    }
-```
+ attachmentManager?.openSelection(mLauncher)
+````
 **Java**
 ```java
- @Override
- protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ArrayList<AttachmentDetail> list = attachmentManager.manipulateAttachments(getApplicationContext(),requestCode, resultCode, data); // gives you neccessary detail about attachment like uri,name,size,path and mimtype
-        Toast.makeText(this, list.size()+"", Toast.LENGTH_LONG).show();
-    }
+attachmentManager.openSelection(mLauncher);
 ```
-5. Overide onRequestPermissionsResult (Optional)
+
+5. Override onRequestPermissionsResult (Optional)
 
 **Kotlin**
 ```kotlin
@@ -222,20 +223,20 @@ override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out
 
 ***Kotlin***
 ```kotlin
- attachmentManager?.startCamera()
+ attachmentManager?.startCamera(mLauncher)
  // OR
- attachmentManager?.openGallery()
+ attachmentManager?.openGallery(mLauncher)
  // OR
- attachmentManager?.openFilSystem()
+ attachmentManager?.openFilSystem(mLauncher)
 ```
 
 **Java**
 ```java
- attachmentManager.startCamera();
+ attachmentManager.startCamera(mLauncher);
  // OR
- attachmentManager.openGallery();
+ attachmentManager.openGallery(mLauncher);
  // OR
- attachmentManager.openFilSystem();
+ attachmentManager.openFilSystem(mLauncher);
 ```
 
 ## Note
