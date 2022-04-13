@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AttachProject</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="attachments_txt">Attachments</string>
+    <string name="close_txt">Close</string>
+    <string name="addAttachments_txt">Add Attachments</string>
 
 </resources>

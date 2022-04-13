@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Environment
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.mirza.attachmentmanager.R
@@ -22,6 +26,7 @@ enum class HideOption {
     GALLERY, CAMERA, DOCUMENT
 }
 
+var selectedRequestCode = AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
 class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
 
@@ -60,17 +65,27 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     /**
      * Call this method to open attachment selection
      */
-    fun openSelection() {
+    fun openSelection(launcher: ActivityResultLauncher<Intent>) {
         activity?.get()?.let {
 
             if (isBottomSheet) {
-                val attachmentFragmentSheet = AttachmentBottomSheet(title, optionsTextColor, imagesColor,hideOptions) { action ->
-                    handleSelectionResponse(action)
+                val attachmentFragmentSheet = AttachmentBottomSheet(
+                    title,
+                    optionsTextColor,
+                    imagesColor,
+                    hideOptions
+                ) { action ->
+                    handleSelectionResponse(action,launcher)
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
             } else {
-                val attachmentFragmentDialog = AttachmentFragment(title, optionsTextColor, imagesColor, hideOptions) { action ->
-                    handleSelectionResponse(action)
+                val attachmentFragmentDialog = AttachmentFragment(
+                    title,
+                    optionsTextColor,
+                    imagesColor,
+                    hideOptions
+                ) { action ->
+                    handleSelectionResponse(action,launcher)
                 }
                 attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")
             }
@@ -82,18 +97,18 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param action contains selection value selected by user using dialog or bottom sheet
      */
 
-    private fun handleSelectionResponse(action: DialogAction) {
+    private fun handleSelectionResponse(action: DialogAction,launcher: ActivityResultLauncher<Intent>) {
         selection = action
         when (action) {
             DialogAction.GALLERY -> {
-                openGallery()
+                openGallery(launcher)
             }
             DialogAction.CAMERA -> {
-                startCamera()
+                startCamera(launcher)
             }
 
             DialogAction.FILE -> {
-                openFileSystem()
+                openFileSystem(launcher)
             }
         }
     }
@@ -104,11 +119,18 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param permissionCode used in case of permission grant
      */
 
-    private fun openCamera(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
-        if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.cameraPermissionList, permissionCode)) {
+    private fun openCamera(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int,launcher: ActivityResultLauncher<Intent>) {
+        if (PermissionManager.checkForPermissions(
+                activity,
+                fragment,
+                PermissionManager.cameraPermissionList,
+                permissionCode
+            )
+        ) {
             val tuple = AttachmentUtil.onCamera(activity!!)
             cameraFile = tuple.photoFile
-            AttachmentUtil.openCamera(tuple, activity, fragment)
+            AttachmentUtil.openCamera(tuple, activity, fragment,launcher)
+            selectedRequestCode = AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
         }
     }
 
@@ -118,11 +140,23 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param permissionCode used in case of permission grant
      */
 
-    private fun openGallery(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
-        if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
+    private fun openGallery(
+        activity: AppCompatActivity?,
+        fragment: Fragment?,
+        permissionCode: Int,launcher: ActivityResultLauncher<Intent>
+    ) {
+        if (PermissionManager.checkForPermissions(
+                activity,
+                fragment,
+                PermissionManager.storagePermissionList,
+                permissionCode
+            )
+        ) {
 
-            val intent = AttachmentUtil.onPhoto(activity!!, isMultiple, galleryMimeTypes = galleryMimeTypes)
-            AttachmentUtil.openGallery(intent, activity, fragment)
+            val intent =
+                AttachmentUtil.onPhoto(activity!!, isMultiple, galleryMimeTypes = galleryMimeTypes)
+            AttachmentUtil.openGallery(intent, activity, fragment,launcher)
+            selectedRequestCode = AttachmentUtil.PICK_PHOTO_CODE
         }
     }
 
@@ -131,25 +165,41 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param fragment will hold the reference to fragment if user is interacting with AttachmentManager from fragment.
      * @param permissionCode used in case of permission grant
      */
-    private fun openFileSystem(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int) {
-        if (PermissionManager.checkForPermissions(activity, fragment, PermissionManager.storagePermissionList, permissionCode)) {
-            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple, filesMimeTypes)
+    private fun openFileSystem(
+        activity: AppCompatActivity?,
+        fragment: Fragment?,
+        permissionCode: Int,launcher: ActivityResultLauncher<Intent>
+    ) {
+
+        if (PermissionManager.checkAndroidVersionAndPermission(
+                activity,
+                fragment,
+                PermissionManager.storagePermissionList,
+                permissionCode
+            )
+        ) {
+            selectedRequestCode = AttachmentUtil.FILE_CODE
+            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple, filesMimeTypes,launcher)
         }
     }
 
     /**
      * Use below three methods to interact with AttachmentManager directly without any dialog or bottom sheet
      */
-    fun startCamera() {
-        openCamera(activity?.get(), fragment?.get(), AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+    fun startCamera(launcher: ActivityResultLauncher<Intent>) {
+        openCamera(
+            activity?.get(),
+            fragment?.get(),
+            AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,launcher
+        )
     }
 
-    fun openGallery() {
-        openGallery(activity?.get(), fragment?.get(), AttachmentUtil.PICK_PHOTO_CODE)
+    fun openGallery(launcher: ActivityResultLauncher<Intent>) {
+        openGallery(activity?.get(), fragment?.get(), AttachmentUtil.PICK_PHOTO_CODE,launcher)
     }
 
-    fun openFileSystem() {
-        openFileSystem(activity?.get(), fragment?.get(), AttachmentUtil.FILE_CODE)
+    fun openFileSystem(launcher: ActivityResultLauncher<Intent>) {
+        openFileSystem(activity?.get(), fragment?.get(), AttachmentUtil.FILE_CODE,launcher)
     }
 
 
@@ -157,10 +207,14 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use this method from onActivityResult within your activity or fragment
      * @return List of AttachmentDetail objects
      */
-    fun manipulateAttachments(context: Context, requestCode: Int, resultCode: Int, data: Intent?): ArrayList<AttachmentDetail>? {
+    fun manipulateAttachments(
+        context: Context,
+        resultCode: Int,
+        data: Intent?
+    ): ArrayList<AttachmentDetail> {
         val list = ArrayList<AttachmentDetail>()
         if (resultCode == RESULT_OK) {
-            when (requestCode) {
+            when (selectedRequestCode) {
                 AttachmentUtil.FILE_CODE, AttachmentUtil.PICK_PHOTO_CODE -> {
                     if (data != null) {
                         if (isMultiple && data.clipData != null) {
@@ -170,12 +224,30 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                                 for (x in 0 until it.itemCount) {
                                     it.getItemAt(x).uri?.let { uri ->
                                         var uriFromFile = uri
-                                        if (requestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(uriFromFile, activity?.get()!!)?.contains("video", true) == false) {
+                                        if (selectedRequestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(
+                                                uriFromFile,
+                                                activity?.get()!!
+                                            )?.contains("video", true) == false
+                                        ) {
                                             checkAndAdjustImageSize(uri, context)?.let {
                                                 uriFromFile = it
                                             }
                                         }
-                                        list.add(prepareAttachment(uriFromFile, FileUtil.getFileDisplayName(uriFromFile, activity?.get()!!, File(uriFromFile.toString())), FileUtil.getMimeType(uriFromFile, activity?.get()!!), FileUtil.getFileSize(uriFromFile, activity?.get()!!)))
+                                        list.add(
+                                            prepareAttachment(
+                                                uriFromFile,
+                                                FileUtil.getFileDisplayName(
+                                                    uriFromFile,
+                                                    activity?.get()!!,
+                                                    File(uriFromFile.toString())
+                                                ),
+                                                FileUtil.getMimeType(
+                                                    uriFromFile,
+                                                    activity?.get()!!
+                                                ),
+                                                FileUtil.getFileSize(uriFromFile, activity?.get()!!)
+                                            )
+                                        )
                                     }
 
                                 }
@@ -186,13 +258,28 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                             val fileUri = data.data
                             fileUri?.let { uri ->
                                 var uriFromFile = uri
-                                if (requestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(uriFromFile, activity?.get()!!)?.contains("video", true) == false) {
+                                if (selectedRequestCode == AttachmentUtil.PICK_PHOTO_CODE && FileUtil.getMimeType(
+                                        uriFromFile,
+                                        activity?.get()!!
+                                    )?.contains("video", true) == false
+                                ) {
                                     checkAndAdjustImageSize(uri, context)?.let {
                                         uriFromFile = it
                                     }
                                 }
 
-                                list.add(prepareAttachment(uriFromFile, FileUtil.getFileDisplayName(uriFromFile, activity?.get()!!, File(uriFromFile.toString())), FileUtil.getMimeType(uriFromFile, activity?.get()!!), FileUtil.getFileSize(uriFromFile, activity?.get()!!)))
+                                list.add(
+                                    prepareAttachment(
+                                        uriFromFile,
+                                        FileUtil.getFileDisplayName(
+                                            uriFromFile,
+                                            activity?.get()!!,
+                                            File(uriFromFile.toString())
+                                        ),
+                                        FileUtil.getMimeType(uriFromFile, activity?.get()!!),
+                                        FileUtil.getFileSize(uriFromFile, activity?.get()!!)
+                                    )
+                                )
                             }
                         }
                     }
@@ -202,14 +289,25 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     cameraFile?.let {
 
                         var fileUri = Uri.fromFile(cameraFile)
-                        val displayName = FileUtil.getFileDisplayName(fileUri, activity?.get() as AppCompatActivity, it)
+                        val displayName = FileUtil.getFileDisplayName(
+                            fileUri,
+                            activity?.get() as AppCompatActivity,
+                            it
+                        )
                         // Resize Image
                         checkAndAdjustImageSize(fileUri, context)?.let {
                             fileUri = it
                         }
 
 
-                        list.add(prepareAttachment(fileUri, displayName, FileUtil.getMimeType(fileUri, activity?.get()!!), FileUtil.getFileSize(fileUri, activity?.get()!!)))
+                        list.add(
+                            prepareAttachment(
+                                fileUri,
+                                displayName,
+                                FileUtil.getMimeType(fileUri, activity?.get()!!),
+                                FileUtil.getFileSize(fileUri, activity?.get()!!)
+                            )
+                        )
                     }
 
 
@@ -237,27 +335,42 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * Use this method from onRequestPermissionsResult within your activity or fragment
      * It will handle permission results for you
      */
-    fun handlePermissionResponse(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun handlePermissionResponse(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray,launcher: ActivityResultLauncher<Intent>
+    ) {
         when (requestCode) {
             AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCamera()
+                    startCamera(launcher)
                 }
             }
             AttachmentUtil.PICK_PHOTO_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openGallery()
+                    openGallery(launcher)
                 }
             }
             AttachmentUtil.FILE_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openFileSystem()
+                if (SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+                        openFileSystem(launcher)
+                    }
+                } else {
+                    if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        openFileSystem(launcher)
+                    }
                 }
             }
         }
     }
 
-    private fun prepareAttachment(uri: Uri, name: String, mimeType: String?, size: Long): AttachmentDetail {
+    private fun prepareAttachment(
+        uri: Uri,
+        name: String,
+        mimeType: String?,
+        size: Long
+    ): AttachmentDetail {
 
         val attachmentDetail = AttachmentDetail()
         attachmentDetail.uri = uri
@@ -286,7 +399,8 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         var filesMimeTypes: Array<String>? = null
 
         var maxPhotoSize: Long? = null
-        fun fragment(fragment: Fragment?) = apply { this.fragment = WeakReference<Fragment>(fragment) }
+        fun fragment(fragment: Fragment?) =
+            apply { this.fragment = WeakReference<Fragment>(fragment) }
 
         /**
          * @param title of dialog or bottom sheet

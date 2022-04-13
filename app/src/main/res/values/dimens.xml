@@ -1,3 +1,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="mid_box_size">100dp</dimen>
+    <dimen name="corner">1dp</dimen>
+    <dimen name="count_answer_icon_size">22dp</dimen>
+    <dimen name="border">2dp</dimen>
 </resources>

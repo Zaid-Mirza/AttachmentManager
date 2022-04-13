@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ object AttachmentUtil {
     const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1000
     const val PICK_PHOTO_CODE = 1001
     const val FILE_CODE = 125
+    const val STORAGE_CODE = 126
+    const val REQUEST_CODE = "REQUEST_CODE"
     val types = arrayOf(
 
             "image/png",
@@ -75,6 +78,7 @@ object AttachmentUtil {
         // create Intent to take a picture and return control to the caller
 
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(REQUEST_CODE, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
         // Create a File reference to access to future access
         val photoFileName = "IMG_" + System.currentTimeMillis() + ".jpg"
         val photoFile = getPhotoFileUri(photoFileName, context)
@@ -95,7 +99,7 @@ object AttachmentUtil {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
 
         intent.type = galleryMimeTypes?.joinToString(separator = ",") ?: types.joinToString("|")
-
+        intent.putExtra(REQUEST_CODE, PICK_PHOTO_CODE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
      //   intent.putExtra(Intent.EXTRA_MIME_TYPES, galleryMimeTypes)
@@ -103,60 +107,40 @@ object AttachmentUtil {
 
     }
 
-    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?, isMultiple: Boolean?, fileMimeTypes: Array<String>?): Intent {
-        val intent = Intent()
-        intent.action = Intent.ACTION_OPEN_DOCUMENT
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple ?: false)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        val fileMimeTypes = fileMimeTypes ?: FileUtil.mimeTypes
+    fun onFile(activity: AppCompatActivity?, fragmentContext: Fragment?, isMultiple: Boolean?, pFileMimeTypes: Array<String>?,launcher: ActivityResultLauncher<Intent>): Intent {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            action = Intent.ACTION_OPEN_DOCUMENT
+            addCategory(Intent.CATEGORY_OPENABLE)
+            putExtra(REQUEST_CODE, FILE_CODE)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple ?: false)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        }
+
+        val fileMimeTypes = pFileMimeTypes ?: FileUtil.mimeTypes
         intent.type = if (fileMimeTypes.size == 1) fileMimeTypes[0] else "*/*"
         if (!fileMimeTypes.isNullOrEmpty()) {
             intent.putExtra(Intent.EXTRA_MIME_TYPES, fileMimeTypes)
         }
 
-
-        val list = activity?.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        if (list?.size!! > 0) {
-            if (fragmentContext == null) {
-                activity.startActivityForResult(
-                        Intent.createChooser(
-                                intent,
-                                activity.getString(R.string.m_selectFile_txt)
-                        ), FILE_CODE
-                )
-            } else {
-                fragmentContext.startActivityForResult(
-                        Intent.createChooser(
-                                intent,
-                                activity.getString(R.string.m_selectFile_txt)
-                        ), FILE_CODE
-                )
-            }
+        val list = activity?.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_ALL)
+        if (list?.size!! > 0) run {
+            launcher.launch(intent)
         }
         return intent
     }
 
-    fun openCamera(tuple: Tuple, activity: AppCompatActivity?, fragmentContext: Fragment?) {
+    fun openCamera(tuple: Tuple, activity: AppCompatActivity?, fragmentContext: Fragment?,launcher: ActivityResultLauncher<Intent>) {
 
         if (tuple.intent?.resolveActivity(activity?.packageManager!!) != null) {
-            if (fragmentContext == null) {
-                activity?.startActivityForResult(tuple.intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
-            } else {
-                fragmentContext.startActivityForResult(tuple.intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
-            }
+           launcher.launch(tuple.intent)
         }
     }
 
-    fun openGallery(intent: Intent, activity: AppCompatActivity?, fragmentContext: Fragment?) {
+    fun openGallery(intent: Intent, activity: AppCompatActivity?, fragmentContext: Fragment?,launcher: ActivityResultLauncher<Intent>) {
         if (intent.resolveActivity(activity?.packageManager!!) != null) {
             // Bring up gallery to select a photo
-            if (fragmentContext == null) {
-                activity.startActivityForResult(intent, PICK_PHOTO_CODE)
-            } else {
-                fragmentContext.startActivityForResult(intent, PICK_PHOTO_CODE)
-            }
+            launcher.launch(intent)
         }
     }
 

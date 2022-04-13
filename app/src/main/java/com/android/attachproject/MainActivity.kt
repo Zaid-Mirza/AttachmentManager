@@ -1,21 +1,20 @@
 package com.android.attachproject
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Base64
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.attachproject.databinding.ActivityMainBinding
 import com.mirza.attachmentmanager.managers.AttachmentManager
-import com.mirza.attachmentmanager.managers.HideOption
-
+import com.mirza.attachmentmanager.models.AttachmentDetail
 import kotlinx.android.synthetic.main.activity_main.*
-import org.apache.commons.io.IOUtils
-import java.io.IOException
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private var attachmentManager: AttachmentManager? = null
     var gallery = arrayOf("image/png",
             "image/jpg",
@@ -25,7 +24,8 @@ class MainActivity : AppCompatActivity() {
             "application/pdf")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(toolbar)
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
@@ -50,22 +50,26 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val list = attachmentManager?.manipulateAttachments(applicationContext, requestCode, resultCode, data)
 
-        Toast.makeText(this, list?.size.toString(), Toast.LENGTH_LONG).show()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults)
-    }
-
-    fun convertFileTo64base(context: Context, uri: Uri?): String? {
-        var byteArray = ByteArray(0)
-        try {
-            val inputStream = context.contentResolver.openInputStream(uri!!)
-            byteArray = IOUtils.toByteArray(inputStream)
-            inputStream!!.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+          attachmentManager?.openSelection(mLauncher)
+          //  test()
         }
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+        binding.contentLayout.attachmentRecyclerView.layoutManager =
+            GridLayoutManager(this, 1, RecyclerView.HORIZONTAL, false)
+        attachmentAdapter = AttachmentAdapter(allAttachments!!)
+        binding.contentLayout.attachmentRecyclerView.adapter = attachmentAdapter
+        binding.contentLayout.addAttachmentImageView.setOnClickListener {
+            attachmentManager?.openSelection(mLauncher)
+        }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults,mLauncher)
+    }
+
 }
