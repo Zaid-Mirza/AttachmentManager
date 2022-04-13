@@ -29,17 +29,17 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
-                .fragment(null) // pass fragment reference if you are in fragment
-                .setUiTitle(getString(R.string.m_choose)) // title of dialog or bottom sheet
-                .allowMultiple(true) // set true if you want make multiple selection, default is false
-                .asBottomSheet(false) // set true if you need to show selection as bottom sheet, default is as Dialog
-                .setOptionsTextColor(android.R.color.holo_green_light)
-                .setImagesColor(R.color.colorAccent)
-                 // You can hide any option do you want
-                .setMaxPhotoSize(200000) // Set max camera photo size in bytes
-                .galleryMimeTypes(gallery) // mime types for gallery
-                .filesMimeTypes(files) // mime types for files
-                .build()
+            .fragment(null) // pass fragment reference if you are in fragment
+            .setUiTitle("Choose File") // title of dialog or bottom sheet
+            .allowMultiple(false) // set true if you want make multiple selection, default is false
+            .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
+            .setOptionsTextColor(android.R.color.holo_green_light) // change text color
+            .setImagesColor(R.color.colorAccent) // change icon color
+            .hide(HideOption.DOCUMENT) // You can hide any option do you want
+            .setMaxPhotoSize(200000) // Set max  photo size in bytes
+            .galleryMimeTypes(gallery) // mime types for gallery
+            .filesMimeTypes(files) // mime types for files
+            .build(); // Hide any of the three options
         fab.setOnClickListener {
 
             attachmentManager?.openSelection()
