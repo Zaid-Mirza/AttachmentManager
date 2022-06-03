@@ -11,4 +11,5 @@
     <string name="m_image">Image</string>
     <string name="m_close_dialog_txt">Close Dialog</string>
     <string name="m_gallery">Gallery</string>
+    <string name="cancel_txt">Cancel</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.android.attachproject
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.attachproject.databinding.ActivityMainBinding
 import com.mirza.attachmentmanager.managers.AttachmentManager
+import com.mirza.attachmentmanager.managers.HideOption
 import com.mirza.attachmentmanager.models.AttachmentDetail
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.ArrayList
@@ -16,12 +18,45 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var attachmentManager: AttachmentManager? = null
-    var gallery = arrayOf("image/png",
-            "image/jpg",
-            "image/jpeg")
-    var files = arrayOf("application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .ppt & .pptx
-            "application/pdf")
+    private var attachmentAdapter: AttachmentAdapter? = null
+    private var allAttachments : ArrayList<AttachmentDetail>?= arrayListOf<AttachmentDetail>()
+    private var mLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+
+        allAttachments = attachmentAdapter?.getItems()
+
+
+        attachmentManager?.manipulateAttachments(this,result.resultCode,result.data)?.let {
+
+            if(it.size > 0 && it[0].mimeType?.contains("pdf",ignoreCase = true) == true) {
+                if (it.size > 0 && it[0].size!! <= 2000000) {
+                    allAttachments?.addAll(it)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "File size can't be more than 2MB",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }else if (it.size > 0){
+                allAttachments?.addAll(it)
+            }else{
+
+            }
+
+        }
+        attachmentAdapter?.updateData(allAttachments!!)
+    }
+    var gallery = arrayOf(
+        "image/png",
+        "image/jpg",
+        "image/jpeg"
+    )
+    var files = arrayOf(
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .ppt & .pptx
+        "application/pdf"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -42,16 +77,7 @@ class MainActivity : AppCompatActivity() {
             .build(); // Hide any of the three options
         fab.setOnClickListener {
 
-            attachmentManager?.openSelection()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val list = attachmentManager?.manipulateAttachments(applicationContext, requestCode, resultCode, data)
-
-          attachmentManager?.openSelection(mLauncher)
-          //  test()
+            attachmentManager?.openSelection(mLauncher)
         }
 
         binding.contentLayout.attachmentRecyclerView.layoutManager =
@@ -63,13 +89,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        attachmentManager?.handlePermissionResponse(requestCode, permissions, grantResults,mLauncher)
+        attachmentManager?.handlePermissionResponse(
+            requestCode,
+            permissions,
+            grantResults,
+            mLauncher
+        )
     }
 
 }

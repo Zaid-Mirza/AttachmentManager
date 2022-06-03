@@ -58,14 +58,23 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@android:color/white"
-        android:drawableTint="?attr/colorPrimary"
         android:drawableStart="@drawable/ic_am_attach_file"
         android:drawablePadding="32dp"
+        android:drawableTint="?attr/colorPrimary"
         android:gravity="start|center_vertical"
         android:text="@string/m_document"
         android:textSize="16sp"
 
         android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_materialButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:layout_marginEnd="16dp"
+        android:text="@string/cancel_txt" />
 
 
 </LinearLayout>

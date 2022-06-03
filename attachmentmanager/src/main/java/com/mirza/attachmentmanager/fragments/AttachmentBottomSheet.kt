@@ -18,11 +18,16 @@ import com.mirza.attachmentmanager.managers.HideOption
 import android.graphics.PorterDuffColorFilter
 
 import android.graphics.drawable.Drawable
+import com.google.android.material.button.MaterialButton
 
 
-
-
-class AttachmentBottomSheet(var title: String? = null, private val optionTextColor: Int? = null, private val imagesColor: Int? = null, private val hideOption: HideOption?, val listener: (DialogAction) -> Unit) : BottomSheetDialogFragment() {
+class AttachmentBottomSheet(
+    var title: String? = null,
+    private val optionTextColor: Int? = null,
+    private val imagesColor: Int? = null,
+    private val hideOption: HideOption?,
+    val listener: (DialogAction) -> Unit
+) : BottomSheetDialogFragment() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +35,11 @@ class AttachmentBottomSheet(var title: String? = null, private val optionTextCol
         retainInstance = true
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
 
         val view = inflater.inflate(R.layout.layout_attachment_sheet, container, false)
@@ -39,10 +48,11 @@ class AttachmentBottomSheet(var title: String? = null, private val optionTextCol
         val imageTextView = view.findViewById<TextView>(R.id.gallery_textView)
         val cameraTextView = view.findViewById<TextView>(R.id.camera_textView)
         val fileTextView = view.findViewById<TextView>(R.id.file_textView)
+        val cancelMaterialButton = view.findViewById<MaterialButton>(R.id.cancel_materialButton)
 
-        setTextViewDrawableColor(imageTextView,imagesColor,optionTextColor)
-        setTextViewDrawableColor(cameraTextView,imagesColor,optionTextColor)
-        setTextViewDrawableColor(fileTextView,imagesColor,optionTextColor)
+        setTextViewDrawableColor(imageTextView, imagesColor, optionTextColor)
+        setTextViewDrawableColor(cameraTextView, imagesColor, optionTextColor)
+        setTextViewDrawableColor(fileTextView, imagesColor, optionTextColor)
 
         when (hideOption) {
             HideOption.GALLERY -> {
@@ -72,12 +82,12 @@ class AttachmentBottomSheet(var title: String? = null, private val optionTextCol
             listener(DialogAction.FILE)
             dismiss()
         }
+        cancelMaterialButton.setOnClickListener { dismiss() }
         return view
     }
 
 
-
-    private fun setTextViewDrawableColor(textView: TextView, imageColor: Int?,textColor:Int?) {
+    private fun setTextViewDrawableColor(textView: TextView, imageColor: Int?, textColor: Int?) {
         imageColor?.let {
             for (drawable in textView.compoundDrawablesRelative) {
                 if (drawable != null) {
