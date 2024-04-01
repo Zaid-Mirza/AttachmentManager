@@ -1,7 +1,7 @@
 # AttachmentManager
 
 [![](https://jitpack.io/v/Zaid-Mirza/AttachmentManager.svg)](https://jitpack.io/#Zaid-Mirza/AttachmentManager)
-[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
+[![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 <br/>
 <div align="center">
@@ -102,7 +102,7 @@ allprojects {
 ```
 
 ```groovy
-   implementation 'com.github.Zaid-Mirza:AttachmentManager:2.0.1'
+   implementation 'com.github.Zaid-Mirza:AttachmentManager:3.0.0'
 ```
 
 # Usage
