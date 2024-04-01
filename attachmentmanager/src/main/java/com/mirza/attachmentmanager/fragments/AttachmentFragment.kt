@@ -61,6 +61,7 @@ class AttachmentFragment(val title: String? = null, private val optionTextColor:
             HideOption.DOCUMENT -> {
                 fileLinearLayout.visibility = View.GONE
             }
+            else->{}
         }
         title?.let {
             titleTextView.text = it

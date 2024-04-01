@@ -133,7 +133,7 @@ object AttachmentUtil {
     fun openCamera(tuple: Tuple, activity: AppCompatActivity?, fragmentContext: Fragment?,launcher: ActivityResultLauncher<Intent>) {
 
         if (tuple.intent?.resolveActivity(activity?.packageManager!!) != null) {
-           launcher.launch(tuple.intent)
+           launcher.launch(tuple.intent!!)
         }
     }
 

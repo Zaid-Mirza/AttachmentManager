@@ -11,7 +11,6 @@ import com.android.attachproject.databinding.ActivityMainBinding
 import com.mirza.attachmentmanager.managers.AttachmentManager
 import com.mirza.attachmentmanager.managers.HideOption
 import com.mirza.attachmentmanager.models.AttachmentDetail
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
             .fragment(null) // pass fragment reference if you are in fragment
@@ -70,12 +69,12 @@ class MainActivity : AppCompatActivity() {
             .asBottomSheet(true) // set true if you need to show selection as bottom sheet, default is as Dialog
             .setOptionsTextColor(android.R.color.holo_green_light) // change text color
             .setImagesColor(R.color.colorAccent) // change icon color
-            .hide(HideOption.DOCUMENT) // You can hide any option do you want
+             // You can hide any option do you want
             .setMaxPhotoSize(200000) // Set max  photo size in bytes
             .galleryMimeTypes(gallery) // mime types for gallery
             .filesMimeTypes(files) // mime types for files
             .build(); // Hide any of the three options
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
 
             attachmentManager?.openSelection(mLauncher)
         }

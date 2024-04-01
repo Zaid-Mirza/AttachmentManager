@@ -38,7 +38,7 @@ class AttachmentAdapter(private var list: ArrayList<AttachmentDetail>) : Recycle
 
             binding.attachmentImageView.shapeAppearanceModel = binding.attachmentImageView.shapeAppearanceModel
                     .toBuilder()
-                    .setAllCorners(CornerFamily.ROUNDED, resources.getDimension(R.dimen.small_margin))
+                    .setAllCorners(CornerFamily.ROUNDED, resources.getDimension(com.mirza.attachmentmanager.R.dimen.small_margin))
                     .build()
 
             val requestOptions = RequestOptions()

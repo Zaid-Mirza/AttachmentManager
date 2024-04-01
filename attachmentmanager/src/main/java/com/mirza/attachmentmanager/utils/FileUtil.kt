@@ -251,7 +251,7 @@ object FileUtil {
             // here i override the original image file
             file.createNewFile()
             val outputStream = context.contentResolver.openOutputStream(file.toUri())
-            selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 20, outputStream)
+            selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 20, outputStream!!)
             outputStream?.close()
             file
         } catch (e: java.lang.Exception) {

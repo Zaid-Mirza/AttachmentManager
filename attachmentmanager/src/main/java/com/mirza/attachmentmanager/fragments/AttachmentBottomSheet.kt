@@ -64,6 +64,7 @@ class AttachmentBottomSheet(
             HideOption.DOCUMENT -> {
                 fileTextView.visibility = GONE
             }
+            else->{}
         }
         title?.let {
             titleTextView.text = it
