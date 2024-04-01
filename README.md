@@ -41,7 +41,10 @@ compileOptions {
 1. Add permissions and provider in **AndroidManifest.xml**
 
 ```xml
+    <uses-permission android:name="android.permission.READ_STORAGE_PERMISSION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
 ```
 ```xml
