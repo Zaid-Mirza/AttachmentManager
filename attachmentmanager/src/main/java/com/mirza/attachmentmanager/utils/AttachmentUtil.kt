@@ -119,7 +119,7 @@ object AttachmentUtil {
 
         val fileMimeTypes = pFileMimeTypes ?: FileUtil.mimeTypes
         intent.type = if (fileMimeTypes.size == 1) fileMimeTypes[0] else "*/*"
-        if (!fileMimeTypes.isNullOrEmpty()) {
+        if (fileMimeTypes.isNotEmpty()) {
             intent.putExtra(Intent.EXTRA_MIME_TYPES, fileMimeTypes)
         }
 

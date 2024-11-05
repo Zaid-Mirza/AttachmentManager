@@ -30,6 +30,7 @@ object PermissionManager {
             val requiredPermissions = ArrayList<String>()
             if(SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+                requiredPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
             }else{
                 requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             }

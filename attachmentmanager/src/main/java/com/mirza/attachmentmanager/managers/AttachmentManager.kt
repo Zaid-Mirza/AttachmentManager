@@ -27,6 +27,7 @@ enum class HideOption {
 }
 
 var selectedRequestCode = AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
+
 class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
 
@@ -75,7 +76,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     imagesColor,
                     hideOptions
                 ) { action ->
-                    handleSelectionResponse(action,launcher)
+                    handleSelectionResponse(action, launcher)
                 }
                 attachmentFragmentSheet.show(it.supportFragmentManager, "DIALOG_SELECTION")
             } else {
@@ -85,7 +86,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     imagesColor,
                     hideOptions
                 ) { action ->
-                    handleSelectionResponse(action,launcher)
+                    handleSelectionResponse(action, launcher)
                 }
                 attachmentFragmentDialog.show(it.supportFragmentManager, "DIALOG_SELECTION")
             }
@@ -97,12 +98,16 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param action contains selection value selected by user using dialog or bottom sheet
      */
 
-    private fun handleSelectionResponse(action: DialogAction,launcher: ActivityResultLauncher<Intent>) {
+    private fun handleSelectionResponse(
+        action: DialogAction,
+        launcher: ActivityResultLauncher<Intent>
+    ) {
         selection = action
         when (action) {
             DialogAction.GALLERY -> {
                 openGallery(launcher)
             }
+
             DialogAction.CAMERA -> {
                 startCamera(launcher)
             }
@@ -119,7 +124,12 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
      * @param permissionCode used in case of permission grant
      */
 
-    private fun openCamera(activity: AppCompatActivity?, fragment: Fragment?, permissionCode: Int,launcher: ActivityResultLauncher<Intent>) {
+    private fun openCamera(
+        activity: AppCompatActivity?,
+        fragment: Fragment?,
+        permissionCode: Int,
+        launcher: ActivityResultLauncher<Intent>
+    ) {
         if (PermissionManager.checkForPermissions(
                 activity,
                 fragment,
@@ -129,7 +139,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         ) {
             val tuple = AttachmentUtil.onCamera(activity!!)
             cameraFile = tuple.photoFile
-            AttachmentUtil.openCamera(tuple, activity, fragment,launcher)
+            AttachmentUtil.openCamera(tuple, activity, fragment, launcher)
             selectedRequestCode = AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
         }
     }
@@ -143,7 +153,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private fun openGallery(
         activity: AppCompatActivity?,
         fragment: Fragment?,
-        permissionCode: Int,launcher: ActivityResultLauncher<Intent>
+        permissionCode: Int, launcher: ActivityResultLauncher<Intent>
     ) {
         if (PermissionManager.checkForPermissions(
                 activity,
@@ -155,7 +165,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
 
             val intent =
                 AttachmentUtil.onPhoto(activity!!, isMultiple, galleryMimeTypes = galleryMimeTypes)
-            AttachmentUtil.openGallery(intent, activity, fragment,launcher)
+            AttachmentUtil.openGallery(intent, activity, fragment, launcher)
             selectedRequestCode = AttachmentUtil.PICK_PHOTO_CODE
         }
     }
@@ -168,19 +178,13 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     private fun openFileSystem(
         activity: AppCompatActivity?,
         fragment: Fragment?,
-        permissionCode: Int,launcher: ActivityResultLauncher<Intent>
+        permissionCode: Int, launcher: ActivityResultLauncher<Intent>
     ) {
 
-        if (PermissionManager.checkAndroidVersionAndPermission(
-                activity,
-                fragment,
-                PermissionManager.storagePermissionList,
-                permissionCode
-            )
-        ) {
-            selectedRequestCode = AttachmentUtil.FILE_CODE
-            val intent = AttachmentUtil.onFile(activity, fragment, isMultiple, filesMimeTypes,launcher)
-        }
+
+        selectedRequestCode = AttachmentUtil.FILE_CODE
+        val intent = AttachmentUtil.onFile(activity, fragment, isMultiple, filesMimeTypes, launcher)
+
     }
 
     /**
@@ -190,16 +194,16 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
         openCamera(
             activity?.get(),
             fragment?.get(),
-            AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE,launcher
+            AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, launcher
         )
     }
 
     fun openGallery(launcher: ActivityResultLauncher<Intent>) {
-        openGallery(activity?.get(), fragment?.get(), AttachmentUtil.PICK_PHOTO_CODE,launcher)
+        openGallery(activity?.get(), fragment?.get(), AttachmentUtil.PICK_PHOTO_CODE, launcher)
     }
 
     fun openFileSystem(launcher: ActivityResultLauncher<Intent>) {
-        openFileSystem(activity?.get(), fragment?.get(), AttachmentUtil.FILE_CODE,launcher)
+        openFileSystem(activity?.get(), fragment?.get(), AttachmentUtil.FILE_CODE, launcher)
     }
 
 
@@ -284,6 +288,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                         }
                     }
                 }
+
                 AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
 
                     cameraFile?.let {
@@ -338,7 +343,7 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
     fun handlePermissionResponse(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray,launcher: ActivityResultLauncher<Intent>
+        grantResults: IntArray, launcher: ActivityResultLauncher<Intent>
     ) {
         when (requestCode) {
             AttachmentUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
@@ -346,11 +351,13 @@ class AttachmentManager private constructor(builder: AttachmentBuilder) {
                     startCamera(launcher)
                 }
             }
+
             AttachmentUtil.PICK_PHOTO_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openGallery(launcher)
                 }
             }
+
             AttachmentUtil.FILE_CODE -> {
                 if (SDK_INT >= Build.VERSION_CODES.R) {
                     if (Environment.isExternalStorageManager()) {
