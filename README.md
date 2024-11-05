@@ -29,8 +29,8 @@ You can use this lightweight library to implement the attachment feature (taking
 
 ```groovy
 compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 ```
 
@@ -41,9 +41,11 @@ compileOptions {
 1. Add permissions and provider in **AndroidManifest.xml**
 
 ```xml
-    <uses-permission android:name="android.permission.READ_STORAGE_PERMISSION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+      <uses-permission android:name="android.permission.READ_STORAGE_PERMISSION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
 ```
