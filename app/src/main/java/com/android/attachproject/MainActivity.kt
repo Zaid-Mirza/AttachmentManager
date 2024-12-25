@@ -1,6 +1,6 @@
 package com.android.attachproject
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -11,6 +11,7 @@ import com.android.attachproject.databinding.ActivityMainBinding
 import com.mirza.attachmentmanager.managers.AttachmentManager
 import com.mirza.attachmentmanager.managers.HideOption
 import com.mirza.attachmentmanager.models.AttachmentDetail
+import com.mirza.attachmentmanager.utils.FileUtil
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
 
         attachmentManager?.manipulateAttachments(this,result.resultCode,result.data)?.let {
+
 
             if(it.size > 0 && it[0].mimeType?.contains("pdf",ignoreCase = true) == true) {
                 if (it.size > 0 && it[0].size!! <= 2000000) {
@@ -41,6 +43,10 @@ class MainActivity : AppCompatActivity() {
             }else{
 
             }
+            it.forEach {
+                 val path = FileUtil.getPath(it.uri!!,this)
+                val ss = ""
+            }
 
         }
         attachmentAdapter?.updateData(allAttachments!!)
@@ -56,11 +62,15 @@ class MainActivity : AppCompatActivity() {
         "application/pdf"
     )
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
+
 
         attachmentManager = AttachmentManager.AttachmentBuilder(this) // must pass Context
             .fragment(null) // pass fragment reference if you are in fragment

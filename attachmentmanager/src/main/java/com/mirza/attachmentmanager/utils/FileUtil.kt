@@ -34,7 +34,8 @@ object FileUtil {
             try {
                 cursor = activity.contentResolver.query(fileUri, null, null, null, null)
                 if (cursor != null && cursor.moveToFirst()) {
-                    displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    displayName =
+                        cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 }
             } finally {
                 cursor!!.close()
@@ -53,7 +54,7 @@ object FileUtil {
         } else {
             val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase()
+                fileExtension.toLowerCase()
             )
         }
         return mimeType
@@ -97,11 +98,11 @@ object FileUtil {
     }
 
     var mimeTypes = arrayOf(
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
-            "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/pdf"
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .ppt & .pptx
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/pdf"
     )
 
     @SuppressLint("NewApi")
@@ -123,7 +124,8 @@ object FileUtil {
                 if ("primary".equals(type, ignoreCase = true)) {
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 } else if ("home".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/documents/" + split[1]
+                    return Environment.getExternalStorageDirectory()
+                        .toString() + "/documents/" + split[1]
                 }
             } else if (isDownloadsDocument(uri)) {
 
@@ -135,13 +137,20 @@ object FileUtil {
 
 
                 val contentUriPrefixesToTry =
-                        arrayOf("content://downloads/public_downloads", "content://downloads/my_downloads", "content://downloads/all_downloads")
+                    arrayOf(
+                        "content://downloads/public_downloads",
+                        "content://downloads/my_downloads",
+                        "content://downloads/all_downloads"
+                    )
 
                 for (contentUriPrefix in contentUriPrefixesToTry) {
                     Log.e("DASHT", id.toString())
                     var contentUri: Uri? = null
                     if (id != null && !id.startsWith("msf:")) {
-                        contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id))
+                        contentUri = ContentUris.withAppendedId(
+                            Uri.parse(contentUriPrefix),
+                            java.lang.Long.valueOf(id)
+                        )
                     } else {
                         contentUri = uri
                     }
@@ -156,17 +165,8 @@ object FileUtil {
 
                 }
 
-                // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
-                val fileName = getFileDisplayName(uri, context, null)
-                val cacheDir = getDocumentCacheDir(context)
-                val file = generateFileName(fileName, cacheDir)
-                var destinationPath: String? = null
-                if (file != null) {
-                    destinationPath = file.getAbsolutePath()
-                    saveFileFromUri(context, uri, destinationPath)
-                }
 
-                return destinationPath
+                return copyFileToAppCache(uri, context)
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -185,8 +185,8 @@ object FileUtil {
                 val selection = "_id=?"
                 val selectionArgs = arrayOf(split[1])
 
-                return getDataColumn(context, contentUri
-                        ?: uri, if (contentUri == null) null else selection, if (contentUri == null) null else selectionArgs)
+                return contentUri?.let { getDataColumn(context, it, selection, selectionArgs) }
+                    ?: return copyFileToAppCache(uri, context)
             }
             // MediaProvider
             // DownloadsProvider
@@ -219,6 +219,20 @@ object FileUtil {
         return null
     }
 
+    private fun copyFileToAppCache(uri: Uri, context: Context): String? {
+        // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
+        val fileName = getFileDisplayName(uri, context, null)
+        val cacheDir = getDocumentCacheDir(context)
+        val file = generateFileName(fileName, cacheDir)
+        var destinationPath: String? = null
+        if (file != null) {
+            destinationPath = file.getAbsolutePath()
+            saveFileFromUri(context, uri, destinationPath)
+        }
+
+        return destinationPath
+    }
+
 
     fun saveBitmapToFile(context: Context, file: File): File? {
         return try {
@@ -239,7 +253,8 @@ object FileUtil {
             // Find the correct scale value. It should be the power of 2.
             var scale = 1
             while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                o.outHeight / scale / 2 >= REQUIRED_SIZE
+            ) {
                 scale *= 2
             }
             val o2: BitmapFactory.Options = BitmapFactory.Options()
@@ -388,8 +403,8 @@ object FileUtil {
     }
 
     private fun getDataColumn(
-            context: Context, uri: Uri, selection: String?,
-            selectionArgs: Array<String>?
+        context: Context, uri: Uri, selection: String?,
+        selectionArgs: Array<String>?
     ): String? {
 
         var cursor: Cursor? = null;
@@ -398,19 +413,18 @@ object FileUtil {
 
         try {
             cursor = context.contentResolver.query(
-                    uri, projection, selection, selectionArgs,
-                    null
+                uri, projection, selection, selectionArgs,
+                null
             );
             if (cursor != null && cursor.moveToFirst()) {
 
-                var column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
+                val columnIndex = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(columnIndex);
             }
         } catch (e: Exception) {
             val ss = ""
         } finally {
-            if (cursor != null)
-                cursor.close();
+            cursor?.close();
         }
         return null;
     }
@@ -453,19 +467,19 @@ object FileUtil {
         // if "content://" uri scheme, try contentResolver table
         if (scheme.equals(ContentResolver.SCHEME_CONTENT)) {
             return contentResolver.query(this, arrayOf(OpenableColumns.SIZE), null, null, null)
-                    ?.use { cursor ->
-                        // maybe shouldn't trust ContentResolver for size: https://stackoverflow.com/questions/48302972/content-resolver-returns-wrong-size
-                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                        if (sizeIndex == -1) {
-                            return@use -1L
-                        }
-                        cursor.moveToFirst()
-                        return try {
-                            cursor.getLong(sizeIndex)
-                        } catch (_: Throwable) {
-                            -1L
-                        }
-                    } ?: -1L
+                ?.use { cursor ->
+                    // maybe shouldn't trust ContentResolver for size: https://stackoverflow.com/questions/48302972/content-resolver-returns-wrong-size
+                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeIndex == -1) {
+                        return@use -1L
+                    }
+                    cursor.moveToFirst()
+                    return try {
+                        cursor.getLong(sizeIndex)
+                    } catch (_: Throwable) {
+                        -1L
+                    }
+                } ?: -1L
         } else {
             return -1L
         }
